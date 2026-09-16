@@ -1,0 +1,874 @@
+<title>Padrinhos do Tatame</title>
+<meta name="description" content="Esboço navegável da plataforma de patrocínio de atletas juvenis de jiu-jitsu.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<style>
+  :root{
+    --bg:#F5F3EC; --surface:#FFFFFF; --surface-2:#ECE9DF; --ink:#171B26; --ink-2:#464C5E; --muted:#7A8093;
+    --line:#D9D6CB; --line-strong:#BDB9AC;
+    --accent:#1F4FB4; --accent-ink:#FFFFFF; --accent-soft:#E2E9F9; --accent-line:#9DB3E6;
+    --gold:#B8901F; --gold-soft:#F6EBC8; --ok:#2E7D4F; --ok-soft:#DFF1E5;
+    --belt-branca:#F4F4F4; --belt-cinza:#9CA3AF; --belt-amarela:#F2C94C; --belt-laranja:#F2994A; --belt-verde:#2FA35B;
+    --shadow:0 10px 30px rgba(23,27,38,.08);
+    --radius:14px;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#0F131C; --surface:#161B27; --surface-2:#1E2532; --ink:#EEF0F5; --ink-2:#B9BECB; --muted:#8B91A3;
+      --line:#2A3242; --line-strong:#3A4354;
+      --accent:#7FA2F5; --accent-ink:#0F131C; --accent-soft:#1D2A49; --accent-line:#3A5390;
+      --gold:#E2BE4C; --gold-soft:#3A3115; --ok:#5CC287; --ok-soft:#173224;
+      --belt-branca:#E8E8E8;
+      --shadow:0 10px 30px rgba(0,0,0,.35);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#0F131C; --surface:#161B27; --surface-2:#1E2532; --ink:#EEF0F5; --ink-2:#B9BECB; --muted:#8B91A3;
+    --line:#2A3242; --line-strong:#3A4354;
+    --accent:#7FA2F5; --accent-ink:#0F131C; --accent-soft:#1D2A49; --accent-line:#3A5390;
+    --gold:#E2BE4C; --gold-soft:#3A3115; --ok:#5CC287; --ok-soft:#173224;
+    --belt-branca:#E8E8E8;
+    --shadow:0 10px 30px rgba(0,0,0,.35);
+  }
+
+  *,*::before,*::after{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:"Barlow",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
+  @media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto} *{transition:none!important;animation:none!important} }
+
+  h1,h2,h3,h4{font-family:"Barlow Condensed","Barlow",system-ui,sans-serif;line-height:1.05;margin:0;text-wrap:balance;letter-spacing:.005em}
+  h1{font-size:clamp(2.4rem,7vw,4.4rem);font-weight:800}
+  h2{font-size:clamp(1.7rem,4.5vw,2.6rem);font-weight:700}
+  h3{font-size:1.35rem;font-weight:700}
+  p{margin:0}
+  a{color:var(--accent)}
+  button{font:inherit;color:inherit}
+  :focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:6px}
+
+  .wrap{max-width:1040px;margin:0 auto;padding-inline:16px}
+  .eyebrow{font-family:"Barlow Condensed",sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.12em;font-size:.8rem;color:var(--accent)}
+  .lead{font-size:1.15rem;color:var(--ink-2);max-width:60ch}
+  .muted{color:var(--muted)}
+  .small{font-size:.9rem}
+  .num{font-variant-numeric:tabular-nums}
+
+  /* Top bar */
+  .topbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+  .topbar .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:60px}
+  .brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink);font-family:"Barlow Condensed",sans-serif;font-weight:800;font-size:1.25rem;letter-spacing:.02em;text-transform:uppercase}
+  .brand .mark{width:30px;height:30px;border-radius:8px;background:var(--accent);display:grid;place-items:center;color:var(--accent-ink)}
+  .nav{display:flex;align-items:center;gap:4px}
+  .nav a{color:var(--ink-2);text-decoration:none;padding:8px 10px;border-radius:8px;font-weight:500}
+  .nav a:hover{background:var(--surface-2);color:var(--ink)}
+  .nav a.active{color:var(--ink);background:var(--surface-2)}
+  @media (max-width:560px){ .nav a.hide-sm{display:none} .brand{font-size:1.05rem} .brand span:not(.mark){white-space:nowrap} }
+  .cartbtn{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line-strong);background:var(--surface);border-radius:999px;padding:7px 12px 7px 10px;text-decoration:none;color:var(--ink);font-weight:600;cursor:pointer}
+  .cartbtn .count{min-width:22px;height:22px;border-radius:999px;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;font-size:.8rem;font-weight:700}
+  .cartbtn.empty .count{background:var(--surface-2);color:var(--muted)}
+
+  /* Buttons */
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:10px;padding:12px 18px;font-weight:600;text-decoration:none;cursor:pointer;border:1px solid transparent;transition:transform .12s ease,background .12s ease;white-space:nowrap}
+  .btn:active{transform:translateY(1px)}
+  .btn-primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+  .btn-primary:hover{filter:brightness(1.06)}
+  .btn-secondary{background:var(--surface);color:var(--ink);border-color:var(--line-strong)}
+  .btn-secondary:hover{background:var(--surface-2)}
+  .btn-ghost{background:transparent;color:var(--accent);padding-inline:8px}
+  .btn-lg{padding:15px 24px;font-size:1.05rem}
+  .btn-sm{padding:8px 12px;font-size:.9rem;border-radius:8px}
+  .btn[disabled]{opacity:.55;cursor:not-allowed}
+
+  /* Sections */
+  section{padding-block:56px}
+  @media (max-width:640px){ section{padding-block:40px} }
+  .sec-head{display:flex;flex-direction:column;gap:8px;margin-bottom:28px}
+
+  /* Hero */
+  .hero{padding-block:48px 56px;position:relative;overflow:hidden}
+  .hero .wrap{display:grid;grid-template-columns:1.2fr .8fr;gap:40px;align-items:center}
+  @media (max-width:760px){ .hero .wrap{grid-template-columns:1fr;gap:28px} }
+  .hero-copy{display:flex;flex-direction:column;gap:20px}
+  .hero-ctas{display:flex;gap:12px;flex-wrap:wrap;margin-top:6px}
+  .mat{position:relative;aspect-ratio:1/1;max-width:100%;border-radius:20px;background:var(--accent);overflow:hidden;box-shadow:var(--shadow)}
+  .mat::before{content:"";position:absolute;inset:0;background:
+     linear-gradient(90deg,rgba(255,255,255,.08) 1px,transparent 1px) 0 0/25% 100%,
+     linear-gradient(0deg,rgba(255,255,255,.08) 1px,transparent 1px) 0 0/100% 25%}
+  .mat .mat-inner{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-end;padding:22px;color:#fff;gap:6px}
+  .mat .mat-stat{font-family:"Barlow Condensed",sans-serif;font-size:3.2rem;font-weight:800;line-height:1}
+  .mat .mat-label{opacity:.85;font-weight:500}
+  .mat .mat-pill{position:absolute;top:18px;left:18px;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.35);padding:6px 10px;border-radius:999px;font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase}
+  .stat-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:8px}
+  .stat{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+  .stat b{display:block;font-family:"Barlow Condensed",sans-serif;font-size:1.9rem;font-weight:800;line-height:1}
+  .stat span{color:var(--muted);font-size:.85rem}
+  @media (max-width:420px){ .stat-strip{grid-template-columns:1fr 1fr} }
+
+  /* Steps */
+  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  @media (max-width:720px){ .steps{grid-template-columns:1fr} }
+  .step{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:22px;display:flex;flex-direction:column;gap:12px;position:relative}
+  .step .ico{width:48px;height:48px;border-radius:12px;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center}
+  .step .n{position:absolute;top:18px;right:20px;font-family:"Barlow Condensed",sans-serif;font-weight:800;font-size:1.6rem;color:var(--line-strong)}
+  .step p{color:var(--ink-2)}
+
+  /* Choose cards */
+  .choose{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  @media (max-width:720px){ .choose{grid-template-columns:1fr} }
+  .choose a{display:flex;flex-direction:column;gap:14px;padding:26px;border-radius:var(--radius);text-decoration:none;color:var(--ink);background:var(--surface);border:1px solid var(--line);transition:border-color .12s,transform .12s}
+  .choose a:hover{border-color:var(--accent-line);transform:translateY(-2px)}
+  .choose .arrow{margin-top:auto;color:var(--accent);font-weight:600;display:flex;align-items:center;gap:6px}
+  .avatar-stack{display:flex}
+  .avatar-stack .avatar{width:44px;height:44px;margin-left:-10px;border:3px solid var(--surface);font-size:.9rem}
+  .avatar-stack .avatar:first-child{margin-left:0}
+
+  /* Avatar (placeholder for the real photo) */
+  .avatar{position:relative;display:grid;place-items:center;border-radius:12px;background:var(--surface-2);color:#fff;font-family:"Barlow Condensed",sans-serif;font-weight:800;overflow:hidden;flex-shrink:0}
+  .avatar .belt{position:absolute;left:0;right:0;bottom:0;height:12%;background:var(--belt)}
+  .avatar .belt::after{content:"";position:absolute;right:14%;top:0;bottom:0;width:8%;background:#111}
+  .avatar .ph{position:absolute;top:8px;left:8px;font:600 .6rem/1 "Barlow",sans-serif;letter-spacing:.08em;text-transform:uppercase;opacity:.75;background:rgba(0,0,0,.28);padding:3px 6px;border-radius:4px}
+  .avatar.round{border-radius:50%}
+
+  /* Athlete grid */
+  .grid-atletas{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  @media (max-width:860px){ .grid-atletas{grid-template-columns:repeat(2,1fr)} }
+  @media (max-width:520px){ .grid-atletas{grid-template-columns:1fr} }
+  .card-atleta{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;display:flex;flex-direction:column;text-decoration:none;color:var(--ink);transition:border-color .12s,transform .12s}
+  .card-atleta:hover{border-color:var(--accent-line);transform:translateY(-2px)}
+  .card-atleta .avatar{width:100%;aspect-ratio:4/3;border-radius:0;font-size:3rem}
+  .card-atleta .body{padding:16px;display:flex;flex-direction:column;gap:8px;flex:1}
+  .card-atleta .meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap;color:var(--muted);font-size:.9rem}
+  .card-atleta .frase{color:var(--ink-2)}
+  .card-atleta .foot{margin-top:auto;padding-top:10px;display:flex;justify-content:space-between;align-items:center}
+  .chip{display:inline-flex;align-items:center;gap:6px;padding:3px 9px;border-radius:999px;font-size:.78rem;font-weight:600;background:var(--surface-2);color:var(--ink-2);text-transform:uppercase;letter-spacing:.05em}
+  .chip .dot{width:10px;height:10px;border-radius:2px;background:var(--belt);border:1px solid rgba(0,0,0,.15)}
+
+  /* Profile */
+  .profile{display:grid;grid-template-columns:300px 1fr;gap:32px;align-items:start}
+  @media (max-width:760px){ .profile{grid-template-columns:1fr} }
+  .profile .avatar{width:100%;aspect-ratio:3/4;font-size:4rem;border-radius:18px}
+  @media (max-width:760px){ .profile .avatar{aspect-ratio:4/3;font-size:3rem} }
+  .profile-copy{display:flex;flex-direction:column;gap:18px}
+  .profile-copy .bio{color:var(--ink-2);max-width:62ch;display:flex;flex-direction:column;gap:10px}
+  .conquistas{display:flex;flex-direction:column;gap:6px;padding:0;margin:0;list-style:none}
+  .conquistas li{display:flex;gap:10px;align-items:flex-start;color:var(--ink-2)}
+  .conquistas li::before{content:"";width:8px;height:8px;border-radius:2px;background:var(--gold);margin-top:8px;flex-shrink:0}
+  .meta-box{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:10px}
+  .meta-box .row{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+  .bar{height:10px;border-radius:999px;background:var(--surface-2);overflow:hidden}
+  .bar i{display:block;height:100%;background:var(--gold);border-radius:999px}
+  .back{display:inline-flex;align-items:center;gap:6px;text-decoration:none;color:var(--muted);font-weight:500;margin-bottom:18px}
+  .back:hover{color:var(--ink)}
+
+  /* Tabs + catalog */
+  .tabs{display:flex;gap:6px;background:var(--surface-2);padding:5px;border-radius:12px;width:fit-content;max-width:100%}
+  .tabs button{border:0;background:transparent;padding:10px 16px;border-radius:9px;font-weight:600;cursor:pointer;color:var(--ink-2)}
+  .tabs button[aria-selected="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.08)}
+  .catalog{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:var(--radius);background:var(--surface);overflow:hidden}
+  .item{display:grid;grid-template-columns:44px 1fr auto;gap:14px;align-items:center;padding:16px;border-top:1px solid var(--line)}
+  .item:first-child{border-top:0}
+  @media (max-width:520px){ .item{grid-template-columns:44px 1fr;row-gap:10px} .item .act{grid-column:2} }
+  .item .ico{width:44px;height:44px;border-radius:10px;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center}
+  .item .t{font-weight:600}
+  .item .d{color:var(--muted);font-size:.9rem}
+  .item .act{display:flex;align-items:center;gap:12px;justify-self:end}
+  @media (max-width:520px){ .item .act{justify-self:start;width:100%;justify-content:space-between} }
+  .price{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:1.3rem;white-space:nowrap}
+  .stepper{display:inline-flex;align-items:center;border:1px solid var(--line-strong);border-radius:9px;overflow:hidden}
+  .stepper button{border:0;background:var(--surface);width:34px;height:34px;cursor:pointer;font-size:1.1rem;font-weight:600}
+  .stepper button:hover{background:var(--surface-2)}
+  .stepper output{min-width:30px;text-align:center;font-weight:600}
+  .stepper.zero output{color:var(--muted)}
+  .livre{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .input{border:1px solid var(--line-strong);background:var(--surface);color:var(--ink);border-radius:9px;padding:10px 12px;font:inherit;width:100%}
+  .input.money{width:140px}
+  .plans{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+  @media (max-width:560px){ .plans{grid-template-columns:repeat(2,1fr)} }
+  .plan{border:1px solid var(--line-strong);background:var(--surface);border-radius:12px;padding:14px;cursor:pointer;text-align:left;display:flex;flex-direction:column;gap:4px}
+  .plan[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft);box-shadow:inset 0 0 0 1px var(--accent)}
+  .plan b{font-family:"Barlow Condensed",sans-serif;font-size:1.5rem;font-weight:800}
+  .plan span{color:var(--muted);font-size:.85rem}
+  .panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:20px;display:flex;flex-direction:column;gap:16px}
+  .note{background:var(--gold-soft);border:1px solid color-mix(in srgb,var(--gold) 45%,transparent);color:var(--ink);border-radius:10px;padding:12px 14px;font-size:.92rem}
+  .note.ok{background:var(--ok-soft);border-color:color-mix(in srgb,var(--ok) 45%,transparent)}
+  .note.info{background:var(--accent-soft);border-color:var(--accent-line)}
+
+  /* Sticky cart bar */
+  .cartbar{position:fixed;left:0;right:0;bottom:0;z-index:25;padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px));background:color-mix(in srgb,var(--surface) 92%,transparent);backdrop-filter:blur(10px);border-top:1px solid var(--line);transform:translateY(110%);transition:transform .2s ease}
+  .cartbar.show{transform:none}
+  .cartbar .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .cartbar .sum{display:flex;flex-direction:column;line-height:1.2}
+  .cartbar .sum b{font-family:"Barlow Condensed",sans-serif;font-size:1.3rem}
+  body.has-cartbar{padding-bottom:84px}
+
+  /* Checkout */
+  .checkout{display:grid;grid-template-columns:1.1fr .9fr;gap:24px;align-items:start}
+  @media (max-width:820px){ .checkout{grid-template-columns:1fr} }
+  .lines{display:flex;flex-direction:column;gap:18px}
+  .group h4{font-size:1.1rem;margin-bottom:8px;display:flex;align-items:center;gap:10px}
+  .line{display:grid;grid-template-columns:1fr auto auto;gap:12px;align-items:center;padding:10px 0;border-top:1px solid var(--line)}
+  .line:first-of-type{border-top:0}
+  .line .t{font-weight:500}
+  .line .s{color:var(--muted);font-size:.85rem}
+  .line .rm{border:0;background:transparent;color:var(--muted);cursor:pointer;padding:6px;border-radius:6px}
+  .line .rm:hover{color:var(--ink);background:var(--surface-2)}
+  .totals{display:flex;flex-direction:column;gap:8px;border-top:2px solid var(--line-strong);padding-top:12px}
+  .totals .row{display:flex;justify-content:space-between;align-items:baseline}
+  .totals .row b{font-family:"Barlow Condensed",sans-serif;font-size:1.6rem}
+  .form{display:flex;flex-direction:column;gap:14px}
+  .field{display:flex;flex-direction:column;gap:6px}
+  .field label{font-weight:600;font-size:.92rem}
+  .field textarea{min-height:90px;resize:vertical}
+  .check{display:flex;gap:10px;align-items:flex-start;font-size:.95rem;color:var(--ink-2)}
+  .check input{margin-top:4px}
+  .pay-placeholder{border:2px dashed var(--line-strong);border-radius:12px;padding:18px;display:flex;flex-direction:column;gap:10px;color:var(--ink-2)}
+  .pay-placeholder .methods{display:flex;gap:8px;flex-wrap:wrap}
+  .pay-placeholder .methods span{border:1px solid var(--line);border-radius:8px;padding:6px 10px;font-size:.85rem;background:var(--surface-2);color:var(--muted)}
+  .empty{text-align:center;padding:48px 16px;display:flex;flex-direction:column;gap:14px;align-items:center}
+
+  /* Thanks */
+  .thanks{max-width:640px;margin:0 auto;display:flex;flex-direction:column;gap:20px;text-align:center;align-items:center;padding-block:40px}
+  .thanks .big{width:84px;height:84px;border-radius:50%;background:var(--ok-soft);color:var(--ok);display:grid;place-items:center}
+  .share{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+
+  /* Transparency */
+  .trans{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  @media (max-width:720px){ .trans{grid-template-columns:1fr} }
+  .trans div{padding:18px;border-left:3px solid var(--gold);background:var(--surface);border-radius:0 12px 12px 0}
+  .trans b{display:block;margin-bottom:4px}
+  .trans p{color:var(--ink-2);font-size:.95rem}
+
+  footer{border-top:1px solid var(--line);padding-block:28px;color:var(--muted);font-size:.9rem}
+  footer .wrap{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+  .toast{position:fixed;left:50%;bottom:calc(96px + env(safe-area-inset-bottom,0px));transform:translateX(-50%) translateY(20px);opacity:0;background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:999px;font-weight:600;pointer-events:none;transition:all .2s;z-index:30;max-width:calc(100% - 32px);text-align:center}
+  .toast.show{opacity:1;transform:translateX(-50%)}
+  .sketch-banner{background:var(--ink);color:var(--bg);font-size:.8rem;text-align:center;padding:6px 16px;letter-spacing:.04em}
+</style>
+
+<div class="sketch-banner">Esboço navegável · nomes, fotos e valores são exemplos e serão substituídos pelos dados reais</div>
+
+<header class="topbar">
+  <div class="wrap">
+    <a class="brand" href="#/" aria-label="Início">
+      <span class="mark" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h18"/><path d="M6 8v8"/><path d="M18 8v8"/><path d="M10 5l4 14"/></svg></span>
+      <span id="brand-name">Padrinhos do Tatame</span>
+    </a>
+    <nav class="nav" aria-label="Principal">
+      <a href="#/atletas" data-nav="atletas">Atletas</a>
+      <a href="#/equipe" data-nav="equipe">Equipe</a>
+      <a href="#/#como-funciona" class="hide-sm" data-nav="como">Como funciona</a>
+      <a class="cartbtn empty" id="cartbtn" href="#/checkout" aria-label="Meu apoio">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>
+        <span class="hide-sm">Meu apoio</span>
+        <span class="count" id="cart-count">0</span>
+      </a>
+    </nav>
+  </div>
+</header>
+
+<main id="app" class="wrap"></main>
+
+<footer>
+  <div class="wrap">
+    <span id="footer-team">Padrinhos do Tatame · projeto social de jiu-jitsu juvenil</span>
+    <span>Pagamento será integrado na próxima etapa</span>
+  </div>
+</footer>
+
+<div class="cartbar" id="cartbar" aria-live="polite">
+  <div class="wrap">
+    <div class="sum"><span class="small muted" id="cartbar-label">Seu apoio</span><b class="num" id="cartbar-total">R$ 0</b></div>
+    <a class="btn btn-primary" href="#/checkout">Ver meu apoio</a>
+  </div>
+</div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+/* =========================================================
+   DADOS DE EXEMPLO
+   Tudo aqui será trocado pelos descritivos e fotos reais.
+   ========================================================= */
+const EQUIPE = {
+  nome: "Padrinhos do Tatame",
+  academia: "Equipe Exemplo Jiu-Jitsu",
+  cidade: "Cidade Exemplo, SP",
+  desde: 2019,
+  apresentacao: [
+    "Somos um projeto social que usa o jiu-jitsu para tirar crianças e adolescentes da rua e colocá-los no tatame. Os treinos são gratuitos e acontecem quatro vezes por semana.",
+    "O que falta para os nossos atletas competirem em pé de igualdade é o básico: quimono do tamanho certo, inscrição nos campeonatos e transporte até o ginásio. É aqui que você entra."
+  ],
+  stats: [
+    { valor: "6", label: "atletas apadrinhados" },
+    { valor: "14", label: "campeonatos em 2025" },
+    { valor: "32", label: "medalhas conquistadas" }
+  ],
+  metaMes: { arrecadado: 2140, meta: 6000 },
+  descricao: [
+    "Patrocinar a equipe cobre o que é de todos: o tatame, a van para os campeonatos, o kit de faixas na graduação e o lanche depois do treino.",
+    "Cada item abaixo tem um custo real. Você escolhe o que quer bancar e o valor é repassado integralmente para a equipe."
+  ]
+};
+
+const ATLETAS = [
+  { id: "miguel", nome: "Miguel", idade: 9, faixa: "cinza-branca", faixaCor: "cinza", hue: 214,
+    frase: "Começou aos 6 e nunca mais faltou um treino.",
+    bio: ["Miguel entrou no projeto aos 6 anos acompanhando o irmão mais velho. Hoje é o primeiro a chegar e o último a sair do tatame.",
+          "Está na faixa cinza-branca e quer disputar seu primeiro campeonato estadual este ano. O quimono atual já ficou curto nas mangas."],
+    conquistas: ["Ouro no Festival Kids 2025", "Prata no Aberto da Cidade 2025", "Graduado para cinza-branca em março"],
+    meta: { arrecadado: 410, meta: 900 } },
+  { id: "laura", nome: "Laura", idade: 11, faixa: "amarela", faixaCor: "amarela", hue: 45,
+    frase: "Campeã regional, quer chegar no brasileiro.",
+    bio: ["Laura é a atleta mais graduada da turma infantil. Faixa amarela, ganhou o regional na categoria dela nos dois últimos anos.",
+          "Para chegar ao Campeonato Brasileiro, precisa da inscrição e de transporte até a capital. A família não consegue arcar com a viagem."],
+    conquistas: ["Campeã regional 2024 e 2025", "Bronze no estadual 2025", "Faixa amarela desde 2024"],
+    meta: { arrecadado: 780, meta: 1200 } },
+  { id: "davi", nome: "Davi", idade: 13, faixa: "laranja", faixaCor: "laranja", hue: 22,
+    frase: "O mais dedicado da turma juvenil.",
+    bio: ["Davi treina desde os 8 anos e hoje ajuda o professor a cuidar dos menores. Faixa laranja, lutando na categoria pesado.",
+          "Cresceu 12 centímetros no último ano e o quimono de competição não serve mais."],
+    conquistas: ["Ouro no estadual 2025", "Prata na Copa Jovem 2024", "Monitor da turma infantil"],
+    meta: { arrecadado: 150, meta: 900 } },
+  { id: "sofia", nome: "Sofia", idade: 10, faixa: "cinza", faixaCor: "cinza", hue: 320,
+    frase: "Tímida fora do tatame, feroz dentro dele.",
+    bio: ["Sofia chegou ao projeto no ano passado por indicação da escola. Em poucos meses passou da branca para a cinza.",
+          "Ainda usa quimono emprestado da academia. Um quimono próprio faz toda a diferença para ela se sentir parte da equipe."],
+    conquistas: ["Bronze no Festival Kids 2025", "Graduada para cinza em agosto"],
+    meta: { arrecadado: 60, meta: 700 } },
+  { id: "enzo", nome: "Enzo", idade: 15, faixa: "verde", faixaCor: "verde", hue: 150,
+    frase: "Perto da faixa azul, sonha em dar aula.",
+    bio: ["Enzo é o atleta mais velho do projeto e referência para os mais novos. Faixa verde, deve receber a azul no fim do ano.",
+          "Quer se tornar instrutor e devolver ao projeto o que recebeu. As mensalidades da academia parceira são o maior custo dele hoje."],
+    conquistas: ["Campeão estadual 2024", "Ouro na Copa Jovem 2025", "Faixa verde desde 2024"],
+    meta: { arrecadado: 540, meta: 1100 } },
+  { id: "isabela", nome: "Isabela", idade: 8, faixa: "branca", faixaCor: "branca", hue: 260,
+    frase: "A caçula do projeto, começou há três meses.",
+    bio: ["Isabela é a mais nova do grupo. Entrou há três meses e já pede para treinar todos os dias.",
+          "Ainda não tem faixa nem quimono próprios. Uma faixa nova é o primeiro passo para ela se sentir uma atleta de verdade."],
+    conquistas: ["Primeiro festival em outubro"],
+    meta: { arrecadado: 90, meta: 600 } }
+];
+
+const ITENS_ATLETA = [
+  { id: "quimono",   nome: "Quimono novo",              desc: "Quimono de competição no tamanho certo",  valor: 350, ico: "gi" },
+  { id: "inscricao", nome: "Inscrição em campeonato",   desc: "Uma inscrição em campeonato oficial",      valor: 120, ico: "medal" },
+  { id: "faixa",     nome: "Faixa nova",                desc: "Faixa da graduação atual, no tamanho certo", valor: 60,  ico: "belt" },
+  { id: "rash",      nome: "Rash guard de treino",      desc: "Uniforme para os treinos sem quimono",      valor: 150, ico: "shirt" },
+  { id: "mensal",    nome: "Mensalidade da academia",   desc: "Um mês de treino na academia parceira",     valor: 180, ico: "cal" },
+  { id: "transp",    nome: "Transporte para competição", desc: "Ida e volta para um campeonato",           valor: 200, ico: "bus" }
+];
+
+const ITENS_EQUIPE = [
+  { id: "faixas",    nome: "Kit de faixas para graduação", desc: "Faixas novas para toda a turma na próxima graduação", valor: 400, ico: "belt" },
+  { id: "inscr-eq",  nome: "Inscrição da equipe",          desc: "Cota da inscrição coletiva em um campeonato",          valor: 150, ico: "medal" },
+  { id: "van",       nome: "Van para o campeonato",        desc: "Transporte do time inteiro em um dia de competição",     valor: 600, ico: "bus" },
+  { id: "tatame",    nome: "Cota do tatame novo",          desc: "Uma placa de tatame para renovar a área de treino",     valor: 250, ico: "mat" },
+  { id: "lanche",    nome: "Lanche pós-treino do mês",     desc: "Fruta e suco depois do treino durante um mês",          valor: 300, ico: "apple" }
+];
+
+const PLANOS = [
+  { valor: 30,  label: "Cobre a faixa do ano" },
+  { valor: 50,  label: "Cobre uma inscrição a cada 2 meses" },
+  { valor: 100, label: "Cobre metade da mensalidade" },
+  { valor: 180, label: "Cobre a mensalidade inteira" }
+];
+
+/* =========================================================
+   ESTADO
+   ========================================================= */
+let cart = [];
+try { cart = JSON.parse(localStorage.getItem("bjj-cart") || "[]"); if (!Array.isArray(cart)) cart = []; } catch (e) { cart = []; }
+let ultimoApoio = null;
+const ui = { tab: {}, plano: {} };
+
+function saveCart(){ try { localStorage.setItem("bjj-cart", JSON.stringify(cart)); } catch (e) {} }
+const brl = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 });
+const money = v => brl.format(v);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+
+function alvoNome(alvo){ return alvo.tipo === "equipe" ? "Equipe" : (ATLETAS.find(a => a.id === alvo.id) || {}).nome || ""; }
+function keyOf(l){ return `${l.tipo}|${l.alvo.tipo}|${l.alvo.id}|${l.item}`; }
+
+function addUnico(alvo, item, valor, qtd){
+  const nome = item.id === "livre" ? "Valor livre" : item.nome;
+  const key = `unico|${alvo.tipo}|${alvo.id}|${item.id}`;
+  const ex = cart.find(l => keyOf(l) === key && (item.id !== "livre"));
+  if (ex) { ex.qtd += qtd; }
+  else cart.push({ tipo: "unico", alvo, item: item.id, nome, valor, qtd });
+  saveCart(); syncCart();
+  toast(`${nome} adicionado para ${alvoNome(alvo)}`);
+}
+function setMensal(alvo, valor){
+  cart = cart.filter(l => !(l.tipo === "mensal" && l.alvo.tipo === alvo.tipo && l.alvo.id === alvo.id));
+  cart.push({ tipo: "mensal", alvo, item: "mensal", nome: "Apadrinhamento mensal", valor, qtd: 1 });
+  saveCart(); syncCart();
+  toast(`Você virou padrinho de ${alvoNome(alvo)}: ${money(valor)} por mês`);
+}
+function removeLine(i){ cart.splice(i, 1); saveCart(); syncCart(); render(); }
+function changeQty(i, d){ cart[i].qtd += d; if (cart[i].qtd <= 0) cart.splice(i, 1); saveCart(); syncCart(); render(); }
+function totals(){
+  const hoje = cart.filter(l => l.tipo === "unico").reduce((s, l) => s + l.valor * l.qtd, 0);
+  const mes = cart.filter(l => l.tipo === "mensal").reduce((s, l) => s + l.valor, 0);
+  return { hoje, mes, n: cart.reduce((s, l) => s + l.qtd, 0) };
+}
+
+function syncCart(){
+  const t = totals();
+  const btn = document.getElementById("cartbtn");
+  document.getElementById("cart-count").textContent = t.n;
+  btn.classList.toggle("empty", t.n === 0);
+  const bar = document.getElementById("cartbar");
+  const onCheckout = location.hash.startsWith("#/checkout") || location.hash.startsWith("#/obrigado");
+  const show = t.n > 0 && !onCheckout;
+  bar.classList.toggle("show", show);
+  document.body.classList.toggle("has-cartbar", show);
+  const parts = [];
+  if (t.hoje) parts.push(`${money(t.hoje)} hoje`);
+  if (t.mes) parts.push(`${money(t.mes)}/mês`);
+  document.getElementById("cartbar-total").textContent = parts.join(" + ") || money(0);
+  document.getElementById("cartbar-label").textContent = `${t.n} ${t.n === 1 ? "item escolhido" : "itens escolhidos"}`;
+}
+let toastT;
+function toast(msg){
+  const el = document.getElementById("toast");
+  el.textContent = msg; el.classList.add("show");
+  clearTimeout(toastT); toastT = setTimeout(() => el.classList.remove("show"), 2200);
+}
+
+/* =========================================================
+   COMPONENTES
+   ========================================================= */
+const ICONS = {
+  gi:    '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3l4 3 4-3 4 4-3 3v11H7V10L4 7z"/><path d="M12 6v14"/></svg>',
+  medal: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="15" r="5"/><path d="M8.5 10.5L6 3h4l2 5 2-5h4l-2.5 7.5"/></svg>',
+  belt:  '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9h18v6H3z"/><path d="M15 9v6"/><path d="M17 9v6"/><path d="M9 15l-3 5"/><path d="M11 15l2 5"/></svg>',
+  shirt: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 4h8l4 4-3 3v10H7V11L4 8z"/></svg>',
+  cal:   '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18"/><path d="M8 3v4"/><path d="M16 3v4"/></svg>',
+  bus:   '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="14" rx="3"/><path d="M4 11h16"/><circle cx="8" cy="19" r="1.5"/><circle cx="16" cy="19" r="1.5"/></svg>',
+  mat:   '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M12 3v18"/><path d="M3 12h18"/></svg>',
+  apple: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8c-4-2-8 0-8 5s3 8 5 8 2-1 3-1 1 1 3 1 5-3 5-8-4-7-8-5z"/><path d="M12 8c0-2 1-4 3-5"/></svg>',
+  gift:  '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="13" rx="2"/><path d="M12 8v13"/><path d="M3 13h18"/><path d="M12 8c-2 0-4-1-4-3s3-2 4 3c1-5 4-5 4-3s-2 3-4 3z"/></svg>',
+  heart: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>',
+  users: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><circle cx="17" cy="9" r="2.5"/><path d="M15.5 14.5A5 5 0 0 1 22 19"/></svg>',
+  check: '<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5"/></svg>',
+  arrow: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg>',
+  back:  '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M11 6l-6 6 6 6"/></svg>',
+  x:     '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12"/><path d="M18 6L6 18"/></svg>'
+};
+
+function avatar(a, cls = "", showPh = true){
+  return `<div class="avatar ${cls}" style="--belt:var(--belt-${a.faixaCor});background:linear-gradient(160deg,hsl(${a.hue} 45% 62%),hsl(${a.hue} 55% 38%))" aria-label="Foto de ${esc(a.nome)} (espaço reservado)">
+    ${showPh ? '<span class="ph">foto</span>' : ""}<span>${esc(a.nome[0])}</span><span class="belt" aria-hidden="true"></span></div>`;
+}
+function faixaChip(a){ return `<span class="chip"><span class="dot" style="--belt:var(--belt-${a.faixaCor})"></span>Faixa ${esc(a.faixa)}</span>`; }
+
+function catalogo(alvo, itens){
+  const rows = itens.map(it => `
+    <div class="item">
+      <div class="ico" aria-hidden="true">${ICONS[it.ico]}</div>
+      <div><div class="t">${esc(it.nome)}</div><div class="d">${esc(it.desc)}</div></div>
+      <div class="act">
+        <span class="price num">${money(it.valor)}</span>
+        <button class="btn btn-secondary btn-sm" data-add="${it.id}">Patrocinar</button>
+      </div>
+    </div>`).join("");
+  return `
+    <div class="catalog">${rows}
+      <div class="item">
+        <div class="ico" aria-hidden="true">${ICONS.gift}</div>
+        <div><div class="t">Valor livre</div><div class="d">Qualquer valor ajuda. Você escolhe quanto.</div></div>
+        <div class="act livre">
+          <label class="muted small" for="livre-${alvo.tipo}">R$</label>
+          <input class="input money num" id="livre-${alvo.tipo}" type="number" min="5" step="5" placeholder="50" inputmode="numeric">
+          <button class="btn btn-secondary btn-sm" data-add="livre">Patrocinar</button>
+        </div>
+      </div>
+    </div>`;
+}
+
+function mensal(alvo, quem){
+  const sel = ui.plano[alvo.tipo + alvo.id] || 50;
+  const atual = cart.find(l => l.tipo === "mensal" && l.alvo.tipo === alvo.tipo && l.alvo.id === alvo.id);
+  return `
+    <div class="panel">
+      <div>
+        <h3>Padrinho ou madrinha de ${esc(quem)}</h3>
+        <p class="muted">Um valor fixo todo mês, que você pode cancelar quando quiser. É o que dá previsibilidade ao projeto.</p>
+      </div>
+      <div class="plans" role="group" aria-label="Valor mensal">
+        ${PLANOS.map(p => `<button class="plan" data-plano="${p.valor}" aria-pressed="${sel === p.valor}"><b class="num">${money(p.valor)}<span style="font-size:.9rem;font-weight:600">/mês</span></b><span>${esc(p.label)}</span></button>`).join("")}
+      </div>
+      <div class="livre">
+        <label class="muted small" for="mensal-livre-${alvo.tipo}">Outro valor: R$</label>
+        <input class="input money num" id="mensal-livre-${alvo.tipo}" type="number" min="10" step="5" placeholder="75" inputmode="numeric">
+        <span class="muted small">por mês</span>
+      </div>
+      ${atual ? `<div class="note ok">Você já escolheu ${money(atual.valor)} por mês para ${esc(quem)}. Escolher de novo substitui esse valor.</div>` : ""}
+      <div><button class="btn btn-primary" data-mensal="1">Quero apadrinhar ${esc(quem)}</button></div>
+    </div>`;
+}
+
+function tabs(alvo, quem, itens){
+  const key = alvo.tipo + alvo.id;
+  const t = ui.tab[key] || "unico";
+  return `
+    <div class="tabs" role="tablist" aria-label="Tipo de patrocínio">
+      <button role="tab" aria-selected="${t === "unico"}" data-tab="unico">Patrocínio único</button>
+      <button role="tab" aria-selected="${t === "mensal"}" data-tab="mensal">Apadrinhamento mensal</button>
+    </div>
+    <div style="height:16px"></div>
+    ${t === "unico" ? catalogo(alvo, itens) : mensal(alvo, quem)}`;
+}
+
+function metaBox(m, label){
+  const pct = Math.min(100, Math.round(m.arrecadado / m.meta * 100));
+  return `
+    <div class="meta-box">
+      <div class="row"><span class="eyebrow" style="color:var(--gold)">${esc(label)}</span><span class="muted small num">${pct}%</span></div>
+      <div class="bar"><i style="width:${pct}%"></i></div>
+      <div class="row"><b class="num">${money(m.arrecadado)}</b><span class="muted small num">de ${money(m.meta)}</span></div>
+    </div>`;
+}
+
+/* =========================================================
+   PÁGINAS
+   ========================================================= */
+function pageHome(){
+  return `
+    <section class="hero">
+      <div class="wrap" style="padding:0">
+        <div class="hero-copy">
+          <span class="eyebrow">${esc(EQUIPE.academia)} · Jiu-Jitsu juvenil</span>
+          <h1>Coloque uma criança no tatame.</h1>
+          <p class="lead">${esc(EQUIPE.apresentacao[0])}</p>
+          <div class="hero-ctas">
+            <a class="btn btn-primary btn-lg" href="#/atletas">Escolher um atleta</a>
+            <a class="btn btn-secondary btn-lg" href="#/equipe">Patrocinar a equipe</a>
+          </div>
+          <div class="stat-strip">
+            ${EQUIPE.stats.map(s => `<div class="stat"><b class="num">${esc(s.valor)}</b><span>${esc(s.label)}</span></div>`).join("")}
+          </div>
+        </div>
+        <div class="mat" aria-hidden="true">
+          <span class="mat-pill">Foto da equipe</span>
+          <div class="mat-inner">
+            <span class="mat-stat num">Desde ${EQUIPE.desde}</span>
+            <span class="mat-label">${esc(EQUIPE.cidade)} · treinos gratuitos 4x por semana</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="como-funciona">
+      <div class="sec-head">
+        <span class="eyebrow">Como funciona</span>
+        <h2>Igual a uma lista de presentes, só que o presente é um sonho no tatame.</h2>
+      </div>
+      <div class="steps">
+        <div class="step"><span class="n">1</span><div class="ico">${ICONS.users}</div><h3>Escolha quem apoiar</h3><p>Um atleta específico ou a equipe inteira.</p></div>
+        <div class="step"><span class="n">2</span><div class="ico">${ICONS.gift}</div><h3>Escolha o que patrocinar</h3><p>Um quimono, uma inscrição, uma faixa. Ou um valor mensal.</p></div>
+        <div class="step"><span class="n">3</span><div class="ico">${ICONS.heart}</div><h3>Pague e acompanhe</h3><p>O valor vai direto para o projeto e você recebe o agradecimento do atleta.</p></div>
+      </div>
+    </section>
+
+    <section>
+      <div class="sec-head">
+        <span class="eyebrow">Quem você quer apoiar?</span>
+        <h2>Escolha um caminho.</h2>
+      </div>
+      <div class="choose">
+        <a href="#/atletas">
+          <div class="avatar-stack">${ATLETAS.slice(0, 4).map(a => avatar(a, "round", false)).join("")}</div>
+          <h3>Patrocinar um atleta</h3>
+          <p class="muted">Conheça a história de cada criança e escolha uma para apadrinhar.</p>
+          <span class="arrow">Ver os ${ATLETAS.length} atletas ${ICONS.arrow}</span>
+        </a>
+        <a href="#/equipe">
+          <div class="avatar" style="width:44px;height:44px;background:var(--accent);color:var(--accent-ink);border-radius:50%">${ICONS.mat}</div>
+          <h3>Patrocinar a equipe</h3>
+          <p class="muted">Tatame, van, kit de faixas e tudo o que é de todos.</p>
+          <span class="arrow">Ver as necessidades da equipe ${ICONS.arrow}</span>
+        </a>
+      </div>
+    </section>
+
+    <section>
+      <div class="sec-head">
+        <span class="eyebrow">Transparência</span>
+        <h2>Para onde vai o dinheiro</h2>
+      </div>
+      <div class="trans">
+        <div><b>100% repassado</b><p>Cada real vai para o projeto. O item que você escolhe é comprado ou pago diretamente pela equipe.</p></div>
+        <div><b>Prestação de contas</b><p>Todo mês publicamos o que foi arrecadado e o que foi comprado, com foto.</p></div>
+        <div><b>Você recebe o agradecimento</b><p>O atleta que você apoiou manda uma mensagem quando o item chega.</p></div>
+      </div>
+    </section>`;
+}
+
+function pageAtletas(){
+  return `
+    <section>
+      <div class="sec-head">
+        <span class="eyebrow">Nossos atletas</span>
+        <h2>Escolha quem você quer apadrinhar.</h2>
+        <p class="lead">Cada card abre a história completa e a lista do que cada um precisa.</p>
+      </div>
+      <div class="grid-atletas">
+        ${ATLETAS.map(a => `
+          <a class="card-atleta" href="#/atleta/${a.id}">
+            ${avatar(a)}
+            <div class="body">
+              <h3>${esc(a.nome)}, ${a.idade} anos</h3>
+              <div class="meta">${faixaChip(a)}</div>
+              <p class="frase">${esc(a.frase)}</p>
+              <div class="foot"><span class="muted small num">${Math.round(a.meta.arrecadado / a.meta.meta * 100)}% da meta do mês</span><span class="btn btn-primary btn-sm">Patrocinar</span></div>
+            </div>
+          </a>`).join("")}
+      </div>
+    </section>`;
+}
+
+function pageAtleta(id){
+  const a = ATLETAS.find(x => x.id === id);
+  if (!a) return `<section><div class="empty"><h2>Atleta não encontrado</h2><a class="btn btn-secondary" href="#/atletas">Ver todos os atletas</a></div></section>`;
+  const alvo = { tipo: "atleta", id: a.id };
+  return `
+    <section style="padding-top:28px">
+      <a class="back" href="#/atletas">${ICONS.back} Todos os atletas</a>
+      <div class="profile">
+        <div>
+          ${avatar(a)}
+          <div style="height:16px"></div>
+          ${metaBox(a.meta, "Meta do mês")}
+        </div>
+        <div class="profile-copy">
+          <div>
+            <span class="eyebrow">${esc(EQUIPE.academia)}</span>
+            <h1 style="font-size:clamp(2.2rem,6vw,3.6rem)">${esc(a.nome)}, ${a.idade} anos</h1>
+            <div style="margin-top:10px">${faixaChip(a)}</div>
+          </div>
+          <div class="bio">${a.bio.map(p => `<p>${esc(p)}</p>`).join("")}</div>
+          <div>
+            <span class="eyebrow" style="color:var(--gold)">Conquistas</span>
+            <ul class="conquistas" style="margin-top:8px">${a.conquistas.map(c => `<li>${esc(c)}</li>`).join("")}</ul>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section id="patrocinar" style="padding-top:8px" data-alvo-tipo="atleta" data-alvo-id="${a.id}">
+      <div class="sec-head">
+        <span class="eyebrow">Patrocinar ${esc(a.nome)}</span>
+        <h2>O que ${esc(a.nome)} precisa agora</h2>
+      </div>
+      ${tabs(alvo, a.nome, ITENS_ATLETA)}
+    </section>`;
+}
+
+function pageEquipe(){
+  const alvo = { tipo: "equipe", id: "equipe" };
+  return `
+    <section style="padding-top:28px">
+      <a class="back" href="#/">${ICONS.back} Início</a>
+      <div class="profile">
+        <div>
+          <div class="mat" style="aspect-ratio:3/4;border-radius:18px" aria-hidden="true">
+            <span class="mat-pill">Foto da equipe</span>
+            <div class="mat-inner"><span class="mat-stat num">${ATLETAS.length}</span><span class="mat-label">atletas no projeto</span></div>
+          </div>
+          <div style="height:16px"></div>
+          ${metaBox(EQUIPE.metaMes, "Meta da equipe no mês")}
+        </div>
+        <div class="profile-copy">
+          <div>
+            <span class="eyebrow">${esc(EQUIPE.cidade)} · desde ${EQUIPE.desde}</span>
+            <h1 style="font-size:clamp(2.2rem,6vw,3.6rem)">${esc(EQUIPE.academia)}</h1>
+          </div>
+          <div class="bio">${EQUIPE.descricao.map(p => `<p>${esc(p)}</p>`).join("")}</div>
+          <div class="avatar-stack">${ATLETAS.map(a => avatar(a, "round", false)).join("")}</div>
+        </div>
+      </div>
+    </section>
+    <section id="patrocinar" style="padding-top:8px" data-alvo-tipo="equipe" data-alvo-id="equipe">
+      <div class="sec-head">
+        <span class="eyebrow">Patrocinar a equipe</span>
+        <h2>O que a equipe precisa agora</h2>
+      </div>
+      ${tabs(alvo, "a equipe", ITENS_EQUIPE)}
+    </section>`;
+}
+
+function pageCheckout(){
+  if (!cart.length) return `
+    <section><div class="empty">
+      <div class="avatar" style="width:64px;height:64px;border-radius:50%;background:var(--accent-soft);color:var(--accent)">${ICONS.heart}</div>
+      <h2>Você ainda não escolheu nada.</h2>
+      <p class="muted">Escolha um atleta ou a equipe para começar.</p>
+      <div class="share"><a class="btn btn-primary" href="#/atletas">Ver atletas</a><a class="btn btn-secondary" href="#/equipe">Patrocinar a equipe</a></div>
+    </div></section>`;
+
+  const groups = {};
+  cart.forEach((l, i) => { const k = l.alvo.tipo + "|" + l.alvo.id; (groups[k] = groups[k] || { alvo: l.alvo, lines: [] }).lines.push({ ...l, i }); });
+  const t = totals();
+  return `
+    <section style="padding-top:28px">
+      <div class="sec-head"><span class="eyebrow">Meu apoio</span><h2>Confira o que você escolheu.</h2></div>
+      <div class="checkout">
+        <div class="panel">
+          <div class="lines">
+            ${Object.values(groups).map(g => {
+              const a = g.alvo.tipo === "atleta" ? ATLETAS.find(x => x.id === g.alvo.id) : null;
+              return `<div class="group">
+                <h4>${a ? avatar(a, "round", false).replace('class="avatar round"', 'class="avatar round" style="width:32px;height:32px;font-size:.9rem;') : `<span class="avatar round" style="width:32px;height:32px;background:var(--accent);color:var(--accent-ink)">${ICONS.mat}</span>`} Para ${a ? esc(a.nome) : "a equipe"}</h4>
+                ${g.lines.map(l => `
+                  <div class="line">
+                    <div><div class="t">${esc(l.nome)}</div><div class="s">${l.tipo === "mensal" ? "todo mês, cancele quando quiser" : `${money(l.valor)} cada`}</div></div>
+                    ${l.tipo === "mensal" ? `<span class="price num">${money(l.valor)}<span class="muted small">/mês</span></span>` :
+                      `<div class="act" style="display:flex;align-items:center;gap:10px"><div class="stepper"><button data-qty="${l.i}" data-d="-1" aria-label="Menos">−</button><output class="num">${l.qtd}</output><button data-qty="${l.i}" data-d="1" aria-label="Mais">+</button></div><span class="price num">${money(l.valor * l.qtd)}</span></div>`}
+                    <button class="rm" data-rm="${l.i}" aria-label="Remover">${ICONS.x}</button>
+                  </div>`).join("")}
+              </div>`; }).join("")}
+          </div>
+          <div class="totals">
+            ${t.hoje ? `<div class="row"><span>Pagamento único, hoje</span><b class="num">${money(t.hoje)}</b></div>` : ""}
+            ${t.mes ? `<div class="row"><span>Todo mês</span><b class="num">${money(t.mes)}<span class="muted" style="font-size:1rem">/mês</span></b></div>` : ""}
+          </div>
+          <div class="share" style="justify-content:flex-start"><a class="btn btn-ghost" href="#/atletas">+ Adicionar outro atleta</a><a class="btn btn-ghost" href="#/equipe">+ Apoiar a equipe também</a></div>
+        </div>
+
+        <form class="panel form" id="form-apoio" novalidate>
+          <h3>Seus dados</h3>
+          <div class="field"><label for="f-nome">Nome</label><input class="input" id="f-nome" name="nome" required placeholder="Como você quer ser chamado" autocomplete="name"></div>
+          <div class="field"><label for="f-email">E-mail</label><input class="input" id="f-email" name="email" type="email" required placeholder="para enviar o recibo e as novidades" autocomplete="email"></div>
+          <div class="field"><label for="f-fone">WhatsApp <span class="muted">(opcional)</span></label><input class="input" id="f-fone" name="fone" type="tel" placeholder="(11) 99999-9999" autocomplete="tel"></div>
+          <div class="field"><label for="f-msg">Mensagem para o atleta <span class="muted">(opcional)</span></label><textarea class="input" id="f-msg" name="msg" placeholder="Um incentivo curto que vai ser lido no tatame"></textarea></div>
+          <label class="check"><input type="checkbox" id="f-publico" name="publico" checked> Pode mostrar meu primeiro nome na lista de padrinhos e madrinhas</label>
+          <div class="pay-placeholder">
+            <b>Pagamento</b>
+            <span class="small">Este bloco será substituído pelo meio de pagamento na próxima etapa.</span>
+            <div class="methods"><span>Pix</span><span>Cartão de crédito</span><span>Boleto</span></div>
+          </div>
+          <button class="btn btn-primary btn-lg" type="submit">Confirmar apoio</button>
+          <p class="muted small">Ao confirmar você concorda que o valor será repassado ao projeto para a finalidade escolhida.</p>
+        </form>
+      </div>
+    </section>`;
+}
+
+function pageObrigado(){
+  const u = ultimoApoio;
+  if (!u) return `<section><div class="empty"><h2>Nada por aqui ainda.</h2><a class="btn btn-primary" href="#/">Voltar ao início</a></div></section>`;
+  const nomes = [...new Set(u.cart.map(l => alvoNome(l.alvo)))];
+  const quem = nomes.length === 1 ? (nomes[0] === "Equipe" ? "a equipe" : nomes[0]) : nomes.slice(0, -1).join(", ") + " e " + nomes.slice(-1);
+  const texto = encodeURIComponent(`Acabei de apadrinhar ${quem} no projeto ${EQUIPE.nome}. Vem também: ${location.href.split("#")[0]}`);
+  return `
+    <section><div class="thanks">
+      <div class="big">${ICONS.check}</div>
+      <span class="eyebrow">Apoio confirmado</span>
+      <h1 style="font-size:clamp(2rem,6vw,3.4rem)">Obrigado, ${esc(u.nome.split(" ")[0])}!</h1>
+      <p class="lead" style="text-align:center">Você acabou de mudar o mês de ${esc(quem)}. Assim que o item chegar, você recebe uma foto e uma mensagem.</p>
+      <div class="panel" style="width:100%;text-align:left">
+        ${u.cart.map(l => `<div class="line"><div><div class="t">${esc(l.nome)}${l.qtd > 1 ? ` × ${l.qtd}` : ""}</div><div class="s">para ${esc(alvoNome(l.alvo))}</div></div><span class="price num">${money(l.valor * l.qtd)}${l.tipo === "mensal" ? '<span class="muted small">/mês</span>' : ""}</span><span></span></div>`).join("")}
+        ${u.msg ? `<div class="note info">Sua mensagem: “${esc(u.msg)}”</div>` : ""}
+      </div>
+      <div class="share">
+        <a class="btn btn-primary" target="_blank" rel="noopener" href="https://wa.me/?text=${texto}">Compartilhar no WhatsApp</a>
+        <a class="btn btn-secondary" href="#/atletas">Apoiar mais um atleta</a>
+      </div>
+    </div></section>`;
+}
+
+/* =========================================================
+   ROTEADOR E EVENTOS
+   ========================================================= */
+function route(){
+  const h = location.hash.replace(/^#\/?/, "");
+  const [path, arg] = h.split("/");
+  if (path === "atletas") return { page: "atletas" };
+  if (path === "atleta" && arg) return { page: "atleta", id: arg };
+  if (path === "equipe") return { page: "equipe" };
+  if (path === "checkout") return { page: "checkout" };
+  if (path === "obrigado") return { page: "obrigado" };
+  return { page: "home", anchor: path.startsWith("#") ? path.slice(1) : null };
+}
+
+function render(){
+  const r = route();
+  const app = document.getElementById("app");
+  app.innerHTML = r.page === "atletas" ? pageAtletas()
+    : r.page === "atleta" ? pageAtleta(r.id)
+    : r.page === "equipe" ? pageEquipe()
+    : r.page === "checkout" ? pageCheckout()
+    : r.page === "obrigado" ? pageObrigado()
+    : pageHome();
+  document.querySelectorAll("[data-nav]").forEach(a => a.classList.toggle("active", a.dataset.nav === r.page));
+  document.title = `${EQUIPE.nome}`;
+  syncCart();
+  if (r.anchor) { const el = document.getElementById(r.anchor); if (el) el.scrollIntoView(); }
+  else window.scrollTo({ top: 0 });
+}
+
+function alvoFrom(el){
+  const sec = el.closest("[data-alvo-tipo]");
+  return { tipo: sec.dataset.alvoTipo, id: sec.dataset.alvoId };
+}
+
+document.getElementById("app").addEventListener("click", e => {
+  const b = e.target.closest("button");
+  if (!b) return;
+
+  if (b.dataset.tab){
+    const alvo = alvoFrom(b); ui.tab[alvo.tipo + alvo.id] = b.dataset.tab; render();
+    document.getElementById("patrocinar").scrollIntoView({ block: "start" });
+    return;
+  }
+  if (b.dataset.add){
+    const alvo = alvoFrom(b);
+    const lista = alvo.tipo === "equipe" ? ITENS_EQUIPE : ITENS_ATLETA;
+    if (b.dataset.add === "livre"){
+      const inp = document.getElementById(`livre-${alvo.tipo}`);
+      const v = Math.round(Number(inp.value));
+      if (!v || v < 5) { inp.focus(); toast("Digite um valor a partir de R$ 5"); return; }
+      addUnico(alvo, { id: "livre" }, v, 1); inp.value = "";
+    } else {
+      addUnico(alvo, lista.find(i => i.id === b.dataset.add), lista.find(i => i.id === b.dataset.add).valor, 1);
+    }
+    return;
+  }
+  if (b.dataset.plano){
+    const alvo = alvoFrom(b); ui.plano[alvo.tipo + alvo.id] = Number(b.dataset.plano);
+    b.parentElement.querySelectorAll(".plan").forEach(p => p.setAttribute("aria-pressed", p === b));
+    document.getElementById(`mensal-livre-${alvo.tipo}`).value = "";
+    return;
+  }
+  if (b.dataset.mensal){
+    const alvo = alvoFrom(b);
+    const inp = document.getElementById(`mensal-livre-${alvo.tipo}`);
+    const livre = Math.round(Number(inp.value));
+    const v = livre >= 10 ? livre : (ui.plano[alvo.tipo + alvo.id] || 50);
+    setMensal(alvo, v); render();
+    document.getElementById("patrocinar").scrollIntoView({ block: "start" });
+    return;
+  }
+  if (b.dataset.qty !== undefined){ changeQty(Number(b.dataset.qty), Number(b.dataset.d)); return; }
+  if (b.dataset.rm !== undefined){ removeLine(Number(b.dataset.rm)); return; }
+});
+
+document.getElementById("app").addEventListener("input", e => {
+  if (e.target.id && e.target.id.startsWith("mensal-livre-") && e.target.value){
+    e.target.closest(".panel").querySelectorAll(".plan").forEach(p => p.setAttribute("aria-pressed", "false"));
+  }
+});
+
+document.getElementById("app").addEventListener("submit", e => {
+  if (e.target.id !== "form-apoio") return;
+  e.preventDefault();
+  const f = e.target;
+  const nome = f.nome.value.trim(), email = f.email.value.trim();
+  if (!nome) { f.nome.focus(); toast("Digite seu nome"); return; }
+  if (!email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { f.email.focus(); toast("Digite um e-mail válido"); return; }
+  ultimoApoio = { nome, email, msg: f.msg.value.trim(), publico: f.publico.checked, cart: cart.map(l => ({ ...l })), quando: new Date().toISOString() };
+  cart = []; saveCart(); syncCart();
+  location.hash = "#/obrigado";
+});
+
+window.addEventListener("hashchange", render);
+render();
+</script>
