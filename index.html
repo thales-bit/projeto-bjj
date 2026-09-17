@@ -387,12 +387,66 @@
   .idle{position:fixed;inset:0;z-index:40;background:rgba(4,4,4,.8);display:grid;place-items:center;padding:16px}
   .idle-box{background:var(--surface);color:var(--ink);border:1px solid var(--accent-line);border-radius:8px;padding:28px;max-width:440px;width:100%;display:flex;flex-direction:column;gap:14px;text-align:center;box-shadow:var(--shadow),var(--glow)}
 
+  /* ===== Movimento ===== */
+  @keyframes pageIn{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+  @keyframes riseIn{from{opacity:0;transform:translateY(26px)}to{opacity:1;transform:none}}
+  @keyframes glowPulse{0%,100%{box-shadow:0 0 0 0 rgba(51,235,1,0),0 0 0 rgba(51,235,1,0)}50%{box-shadow:0 0 0 6px rgba(51,235,1,.12),0 0 28px rgba(51,235,1,.45)}}
+  @keyframes arrowNudge{from{transform:translateX(-3px)}to{transform:translateX(5px)}}
+  @keyframes kenburns{from{transform:scale(1)}to{transform:scale(1.08)}}
+  @keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+  @keyframes bump{0%{transform:scale(1)}40%{transform:scale(1.18)}100%{transform:scale(1)}}
+
+  #app.page-in{animation:pageIn .45s cubic-bezier(.2,.7,.2,1) both}
+  .hero-copy>*{animation:riseIn .7s cubic-bezier(.2,.7,.2,1) both}
+  .hero-copy>*:nth-child(1){animation-delay:.05s} .hero-copy>*:nth-child(2){animation-delay:.15s} .hero-copy>*:nth-child(3){animation-delay:.28s} .hero-copy>*:nth-child(4){animation-delay:.4s} .hero-copy>*:nth-child(5){animation-delay:.52s}
+  .hero .mat{animation:riseIn .8s .2s cubic-bezier(.2,.7,.2,1) both}
+  .reveal.in{animation:riseIn .6s cubic-bezier(.2,.7,.2,1) both;animation-delay:calc(var(--i,0)*90ms)}
+  .btn-primary.btn-lg{animation:glowPulse 2.4s ease-in-out infinite}
+  .flow::before,.flow::after{animation:arrowNudge .9s ease-in-out infinite alternate}
+  @media (max-width:720px){ .flow::before,.flow::after{animation:none} }
+  .cartbtn.bump .count{animation:bump .45s ease-out}
+  .foto img{transition:transform .7s ease}
+  @media (hover:hover){ .card-atleta:hover .foto img{transform:scale(1.06)} .modo:hover .ring,.choose a:hover .ring{transform:scale(1.08)} }
+  .card-atleta:active{transform:scale(.985)}
+  .ring{transition:transform .25s ease}
+  .galeria-palco img.on{animation:kenburns 8s ease-out both}
+  .foto.principal img{animation:kenburns 14s ease-out both}
+  .stat b{transition:color .2s}
+  .stat.contando b{color:var(--lime)}
+
+  /* Slideshow de atletas na capa */
+  .mat.slideshow{aspect-ratio:4/5}
+  @media (max-width:900px){ .mat.slideshow{aspect-ratio:4/3} }
+  .mat.slideshow::after{display:none}
+  .mat.slideshow .slide{position:absolute;inset:0;opacity:0;transition:opacity 1.2s ease;z-index:0}
+  .mat.slideshow .slide.on{opacity:1;z-index:1}
+  .mat.slideshow .slide img{width:100%;height:100%;object-fit:cover;object-position:center 22%;display:block;animation:kenburns 7s ease-out both}
+  .mat.slideshow .mat-inner{z-index:3}
+  .mat.slideshow .mat-nome{font-family:"Saira Extra Condensed",sans-serif;font-size:2.2rem;font-weight:800;text-transform:uppercase;line-height:1}
+  .mat.slideshow .mat-nome small{display:block;font-family:"Source Sans 3",sans-serif;text-transform:none;font-weight:600;font-size:1rem;color:var(--lime);letter-spacing:0;margin-top:4px}
+  .mat.slideshow .mat-barra{height:3px;background:rgba(255,255,255,.18);border-radius:2px;overflow:hidden;margin-top:10px}
+  .mat.slideshow .mat-barra i{display:block;height:100%;width:0;background:var(--neon);transition:width 5s linear}
+  .mat.slideshow .mat-barra i.run{width:100%}
+
+  /* Faixa de fotos rolando sem parar */
+  .faixa-fotos{margin-inline:calc(50% - 50vw);overflow:hidden;background:var(--bg-deep);border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding-block:12px;position:relative}
+  .faixa-fotos::before,.faixa-fotos::after{content:"";position:absolute;top:0;bottom:0;width:80px;z-index:2;pointer-events:none}
+  .faixa-fotos::before{left:0;background:linear-gradient(90deg,var(--bg-deep),transparent)}
+  .faixa-fotos::after{right:0;background:linear-gradient(270deg,var(--bg-deep),transparent)}
+  .faixa-track{display:flex;gap:10px;width:max-content;animation:marquee 70s linear infinite}
+  .faixa-track img{height:150px;width:auto;border-radius:6px;display:block;border:1px solid var(--line);flex-shrink:0}
+  @media (max-width:600px){ .faixa-track img{height:110px} }
+
+  /* Fita do topo rolando como letreiro */
+  .sketch-banner .tape{display:inline-flex;animation:marquee 30s linear infinite;white-space:nowrap}
+  .sketch-banner .tape span{padding-inline:12px}
+
   /* Fita de isolamento da marca, usada aqui como aviso de esboço */
-  .sketch-banner{background:var(--lime);color:#0C0C0C;font-family:"Saira Extra Condensed",sans-serif;font-weight:800;text-transform:uppercase;letter-spacing:.22em;font-size:.85rem;text-align:center;padding:7px 16px;white-space:nowrap;overflow:hidden;display:flex;justify-content:center}
+  .sketch-banner{background:var(--lime);color:#0C0C0C;font-family:"Saira Extra Condensed",sans-serif;font-weight:800;text-transform:uppercase;letter-spacing:.22em;font-size:.85rem;text-align:center;padding:7px 0;white-space:nowrap;overflow:hidden;display:flex;justify-content:flex-start}
 </style>
 </head>
 <body>
-<div class="sketch-banner">▲ Esboço navegável ▲ Fotos e valores dos itens ainda por confirmar ▲ Esboço navegável ▲</div>
+<div class="sketch-banner"><div class="tape"><span>▲ Esboço navegável</span><span>▲ Valores dos itens ainda por confirmar</span><span>▲ Battlefield Jiu-Jitsu</span><span>▲ Coloque uma criança no tatame</span><span>▲ Esboço navegável</span><span>▲ Valores dos itens ainda por confirmar</span><span>▲ Battlefield Jiu-Jitsu</span><span>▲ Coloque uma criança no tatame</span></div></div>
 
 <header class="topbar">
   <div class="wrap">
@@ -610,13 +664,13 @@ function addUnico(alvo, item, valor, qtd){
   const ex = cart.find(l => keyOf(l) === key && (item.id !== "livre"));
   if (ex) { ex.qtd += qtd; }
   else cart.push({ tipo: "unico", alvo, item: item.id, nome, valor, qtd });
-  saveCart(); syncCart();
+  saveCart(); syncCart(); bumpCart();
   toast(`${nome} adicionado para ${alvoNome(alvo)}`);
 }
 function setMensal(alvo, valor){
   cart = cart.filter(l => !(l.tipo === "mensal" && l.alvo.tipo === alvo.tipo && l.alvo.id === alvo.id));
   cart.push({ tipo: "mensal", alvo, item: "mensal", nome: "Apadrinhamento mensal", valor, qtd: 1 });
-  saveCart(); syncCart();
+  saveCart(); syncCart(); bumpCart();
   toast(`Você virou padrinho de ${alvoNome(alvo)}: ${money(valor)} por mês`);
 }
 function removeLine(i){ cart.splice(i, 1); saveCart(); syncCart(); render(); }
@@ -776,19 +830,23 @@ function pageHome(){
             <a class="btn btn-primary btn-lg" href="#/apoiar">Ajudar a realizar um sonho ${ICONS.arrow}</a>
           </div>
           <div class="stat-strip">
-            ${EQUIPE.stats.map(s => `<div class="stat"><b class="num">${esc(s.valor)}</b><span>${esc(s.label)}</span></div>`).join("")}
+            ${EQUIPE.stats.map(s => `<div class="stat"><b class="num" data-count="${esc(s.valor)}">${esc(s.valor)}</b><span>${esc(s.label)}</span></div>`).join("")}
           </div>
         </div>
-        <div class="mat" aria-hidden="true">
-          <span class="mat-pill">Foto da equipe</span>
-          <div class="logo"><svg viewBox="0 0 56 64" aria-hidden="true"><path d="M28 3 52 16.5v31L28 61 4 47.5v-31z" fill="#383838" stroke="#33EB01" stroke-width="5" stroke-linejoin="round"/><path d="M28 12 44 21v22L28 52 12 43V21z" fill="none" stroke="#B3F243" stroke-opacity=".5" stroke-width="1.5"/><path d="M17 33h22M22 27l6 6-6 6M34 27l-6 6 6 6" fill="none" stroke="#FCFCFC" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="mat slideshow" id="slideshow" aria-hidden="true">
+          <span class="mat-pill">Nossos atletas</span>
+          ${ATLETAS.filter(a => a.fotos).map((a, i) => `<div class="slide ${i === 0 ? "on" : ""}" data-nome="${esc(a.nome)}" data-frase="${esc(a.frase)}"><img src="${fotoPath(a, a.capa || 1)}" alt=""></div>`).join("")}
           <div class="mat-inner">
-            <span class="mat-stat num">Desde ${EQUIPE.desde}</span>
-            <span class="mat-label">${esc(EQUIPE.cidade)} · treinos gratuitos 4x por semana</span>
+            <span class="mat-nome" id="slide-nome">${esc(ATLETAS[0].nome)}<small id="slide-frase">${esc(ATLETAS[0].frase)}</small></span>
+            <div class="mat-barra"><i id="slide-barra"></i></div>
           </div>
         </div>
       </div>
     </section>
+
+    <div class="faixa-fotos" aria-hidden="true">
+      <div class="faixa-track">${(() => { const fs = []; ATLETAS.forEach(a => { for (let i = 1; i <= a.fotos; i++) fs.push(fotoPath(a, i)); }); const seq = fs.map(f => `<img src="${f}" alt="" loading="lazy" onerror="this.remove()">`).join(""); return seq + seq; })()}</div>
+    </div>
 
     <section id="projeto" class="projeto">
       <div class="sec-head">
@@ -796,11 +854,11 @@ function pageHome(){
         <h2>${esc(EQUIPE.proposito.titulo)}</h2>
       </div>
       <div class="projeto-grid">
-        <div class="projeto-texto">
+        <div class="projeto-texto reveal">
           ${EQUIPE.proposito.paragrafos.map((t, i) => `<p class="${i === 0 ? "lead" : ""}">${esc(t)}</p>`).join("")}
           <p class="frase-forte">“${esc(EQUIPE.proposito.frase)}”<span>${esc(EQUIPE.proposito.autor)}</span></p>
         </div>
-        <div class="projeto-lado">
+        <div class="projeto-lado reveal" style="--i:1">
           <div class="foto-ph" aria-hidden="true"><span class="mat-pill">Foto do treino</span></div>
           <ul class="garantias">
             <li>${ICONS.check} <span><b>100% repassado.</b> Cada real vira o item que você escolheu.</span></li>
@@ -817,21 +875,21 @@ function pageHome(){
         <h2>Três passos. Igual a uma lista de presentes.</h2>
       </div>
       <ol class="flow">
-        <li class="step">
+        <li class="step reveal" style="--i:0">
           <span class="n">1</span>
           <div class="ring">${ICONS.users}</div>
           <h3>Escolha quem apoiar</h3>
           <p>Um atleta ou a equipe inteira.</p>
           <div class="mini"><span>${ICONS.user} Um atleta</span><span>${ICONS.mat} A equipe</span></div>
         </li>
-        <li class="step">
+        <li class="step reveal" style="--i:1">
           <span class="n">2</span>
           <div class="ring">${ICONS.gift}</div>
           <h3>Escolha como apoiar</h3>
           <p>De duas formas, e você pode combinar as duas.</p>
           <div class="mini"><span>${ICONS.gift} Pontual</span><span>${ICONS.cal} Mensal</span></div>
         </li>
-        <li class="step">
+        <li class="step reveal" style="--i:2">
           <span class="n">3</span>
           <div class="ring">${ICONS.heart}</div>
           <h3>Pague aqui no totem</h3>
@@ -842,7 +900,7 @@ function pageHome(){
     </section>
 
     <section class="cta-final">
-      <div class="cta-box">
+      <div class="cta-box reveal">
         <span class="eyebrow">Comece agora</span>
         <h2>Leva menos de dois minutos.</h2>
         <p class="lead">Toque no botão para escolher como e quem você quer apoiar.</p>
@@ -863,7 +921,7 @@ function pageApoiar(){
         <p class="lead">Escolha uma forma agora. Você pode combinar as duas depois.</p>
       </div>
       <div class="modos">
-        <a class="modo" href="#/quem?modo=unico">
+        <a class="modo reveal" style="--i:0" href="#/quem?modo=unico">
           <div class="modo-head"><div class="ring">${ICONS.gift}</div><div><span class="eyebrow">Pontual</span><h3>Patrocine um item, uma vez</h3></div></div>
           <p>Você paga o custo de algo concreto e a equipe entrega para o atleta.</p>
           <ul class="ex">
@@ -873,7 +931,7 @@ function pageApoiar(){
           </ul>
           <span class="btn btn-primary">Quero patrocinar um item ${ICONS.arrow}</span>
         </a>
-        <a class="modo" href="#/quem?modo=mensal">
+        <a class="modo reveal" style="--i:1" href="#/quem?modo=mensal">
           <div class="modo-head"><div class="ring">${ICONS.cal}</div><div><span class="eyebrow">Mensal</span><h3>Seja padrinho ou madrinha</h3></div></div>
           <p>Um valor fixo todo mês, que garante treino e competição o ano inteiro. Cancele quando quiser.</p>
           <ul class="ex">
@@ -897,13 +955,13 @@ function pageQuem(){
         <h2>Quem você quer apoiar?</h2>
       </div>
       <div class="choose">
-        <a href="#/atletas">
+        <a href="#/atletas" class="reveal" style="--i:0">
           <div class="avatar-stack">${ATLETAS.slice(0, 4).map(a => avatar(a, "round", false)).join("")}</div>
           <h3>Um atleta</h3>
           <p class="muted">Conheça a história de cada criança e escolha uma para ${modo === "mensal" ? "apadrinhar" : "patrocinar"}.</p>
           <span class="arrow">Ver os ${ATLETAS.length} atletas ${ICONS.arrow}</span>
         </a>
-        <a href="#/equipe">
+        <a href="#/equipe" class="reveal" style="--i:1">
           <div class="ring">${ICONS.mat}</div>
           <h3>A equipe inteira</h3>
           <p class="muted">Tatame, van, kit de faixas e tudo o que é de todos.</p>
@@ -924,8 +982,8 @@ function pageAtletas(){
         <p class="lead">Cada card abre a história completa e a lista do que cada um precisa.</p>
       </div>
       <div class="grid-atletas">
-        ${ATLETAS.map(a => `
-          <a class="card-atleta" href="#/atleta/${a.id}">
+        ${ATLETAS.map((a, i) => `
+          <a class="card-atleta reveal" style="--i:${i % 3}" href="#/atleta/${a.id}">
             ${foto(a, a.capa || 1, "capa")}
             <div class="body">
               <h3>${esc(a.nome)}, ${a.idade} anos</h3>
@@ -1139,6 +1197,8 @@ function render(){
     : r.page === "obrigado" ? pageObrigado()
     : pageHome();
   document.getElementById("nav-inicio").hidden = r.page === "home";
+  app.classList.remove("page-in"); void app.offsetWidth; app.classList.add("page-in");
+  armReveal(); armCounters(); armSlideshow();
   document.title = `${EQUIPE.nome}`;
   syncCart();
   if (r.anchor) { const el = document.getElementById(r.anchor); if (el) el.scrollIntoView(); }
@@ -1261,6 +1321,45 @@ function armIdle(){
 ["pointerdown", "keydown", "touchstart", "scroll"].forEach(ev => window.addEventListener(ev, () => { if (document.getElementById("idle").hidden) armIdle(); }, { passive: true }));
 document.getElementById("idle-continue").addEventListener("click", () => { document.getElementById("idle").hidden = true; clearInterval(idleCount); armIdle(); });
 document.getElementById("idle-reset").addEventListener("click", resetSessao);
+
+/* Elementos entram quando aparecem na tela */
+let revealIO;
+function armReveal(){
+  if (revealIO) revealIO.disconnect();
+  const els = document.querySelectorAll(".reveal:not(.in)");
+  if (!("IntersectionObserver" in window)) { els.forEach(e => e.classList.add("in")); return; }
+  revealIO = new IntersectionObserver(entries => entries.forEach(en => { if (en.isIntersecting) { en.target.classList.add("in"); revealIO.unobserve(en.target); } }), { threshold: .15 });
+  els.forEach(e => revealIO.observe(e));
+}
+/* Números da capa contam até o valor */
+function armCounters(){
+  document.querySelectorAll("[data-count]").forEach(el => {
+    const raw = el.dataset.count, m = raw.match(/^([^\d]*)(\d+)(.*)$/); if (!m) return;
+    const [, pre, num, pos] = m, alvo = Number(num), t0 = performance.now(), dur = 1400;
+    const stat = el.closest(".stat"); if (stat) stat.classList.add("contando");
+    const step = now => { const k = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - k, 3); el.textContent = pre + Math.round(alvo * e) + pos; if (k < 1) requestAnimationFrame(step); else if (stat) stat.classList.remove("contando"); };
+    requestAnimationFrame(step);
+  });
+}
+/* Slideshow dos atletas na capa */
+let slideT;
+function armSlideshow(){
+  clearInterval(slideT);
+  const box = document.getElementById("slideshow"); if (!box) return;
+  const slides = [...box.querySelectorAll(".slide")]; if (slides.length < 2) return;
+  let i = 0;
+  const barra = document.getElementById("slide-barra");
+  const go = () => {
+    slides[i].classList.remove("on"); i = (i + 1) % slides.length; slides[i].classList.add("on");
+    const im = slides[i].querySelector("img"); im.style.animation = "none"; void im.offsetWidth; im.style.animation = "";
+    document.getElementById("slide-nome").childNodes[0].textContent = slides[i].dataset.nome;
+    document.getElementById("slide-frase").textContent = slides[i].dataset.frase;
+    barra.classList.remove("run"); void barra.offsetWidth; barra.classList.add("run");
+  };
+  requestAnimationFrame(() => barra.classList.add("run"));
+  slideT = setInterval(() => { if (!document.getElementById("slideshow")) { clearInterval(slideT); return; } go(); }, 5000);
+}
+function bumpCart(){ const b = document.getElementById("cartbtn"); b.classList.remove("bump"); void b.offsetWidth; b.classList.add("bump"); }
 
 let galT;
 function galValidos(gal){
