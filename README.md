@@ -4,16 +4,16 @@ Plataforma de patrocínio dos atletas juvenis do Battlefield Jiu-Jitsu (Balneár
 
 ## Estado atual
 
-`index.html` é um esboço navegável, em arquivo único, com dados de exemplo. Todas as páginas já existem:
+`index.html` é um esboço navegável, em arquivo único, com dados de exemplo. O fluxo é linear, pensado para o totem:
 
-- Início: apresentação da equipe, fluxo "como funciona" em 3 passos com setas, dois cartões explicando patrocínio pontual e apadrinhamento mensal (com atalho que já abre o atleta no modo escolhido), escolha entre atleta ou equipe, transparência.
-- Atletas: grade com foto, idade, faixa e frase de cada atleta.
-- Perfil do atleta: história, conquistas, meta do mês, catálogo de patrocínio único e apadrinhamento mensal.
-- Equipe: mesma estrutura, com itens coletivos.
-- Sua escolha: resumo das escolhas, opção de apoiar com nome ou de forma anônima, WhatsApp e mensagem opcionais, bloco reservado para o pagamento.
-- Obrigado: confirmação e compartilhamento.
+1. **Início:** entrada ("Coloque uma criança no tatame"), bloco emocional sobre o projeto com as garantias de transparência, "como funciona" em 3 passos com setas e um único botão "Ajudar a realizar um sonho".
+2. **Como você quer apoiar?** Pontual (itens, pago uma vez) ou mensal (padrinho/madrinha com valor fixo).
+3. **Quem você quer apoiar?** Um atleta ou a equipe inteira.
+4. **Atletas / Perfil do atleta / Equipe:** história, conquistas, meta do mês e o catálogo já aberto no modo escolhido, com a opção de trocar.
+5. **Sua escolha:** resumo, apoio com nome ou anônimo, WhatsApp e mensagem opcionais, bloco reservado para o pagamento.
+6. **Obrigado:** confirmação e retorno automático ao início.
 
-Ainda não há integração de pagamento. O bloco no checkout marca onde ela entra.
+Um indicador de etapas no topo mostra em que passo a pessoa está. Ainda não há integração de pagamento. O bloco no checkout marca onde ela entra.
 
 ## Modo totem
 

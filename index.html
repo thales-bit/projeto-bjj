@@ -21,7 +21,7 @@
 
   *,*::before,*::after{box-sizing:border-box}
   html{scroll-behavior:smooth;background:var(--bg)}
-  body{margin:0;background:var(--bg);color:var(--ink);font-family:"Source Sans 3","Source Sans Pro",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:17px;line-height:1.5;-webkit-font-smoothing:antialiased}
+  body{margin:0;overflow-x:hidden;background:var(--bg);color:var(--ink);font-family:"Source Sans 3","Source Sans Pro",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:17px;line-height:1.5;-webkit-font-smoothing:antialiased}
   @media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto} *{transition:none!important;animation:none!important} }
 
   h1,h2,h3,h4{font-family:"Saira Extra Condensed","Barlow Condensed",Impact,sans-serif;line-height:.95;margin:0;text-wrap:balance;text-transform:uppercase;letter-spacing:.01em}
@@ -81,10 +81,11 @@
   /* Hero */
   .hero{padding-block:44px 60px;position:relative;overflow:hidden}
   .hero .wrap{display:grid;grid-template-columns:1.15fr .85fr;gap:40px;align-items:center}
-  @media (max-width:760px){ .hero .wrap{grid-template-columns:1fr;gap:28px} }
+  @media (max-width:900px){ .hero .wrap{grid-template-columns:1fr;gap:28px} .mat{aspect-ratio:16/10} }
   .hero-copy{display:flex;flex-direction:column;gap:20px}
   .hero-copy h1 .g{color:var(--neon)}
   .hero-ctas{display:flex;gap:12px;flex-wrap:wrap;margin-top:6px}
+  .hero-ctas .btn{white-space:normal;text-align:center}
   .mat{position:relative;aspect-ratio:1/1;max-width:100%;border-radius:10px;background:var(--bg-deep);overflow:hidden;border:1px solid var(--line);box-shadow:var(--shadow)}
   .mat::before{content:"";position:absolute;inset:0;background:var(--hex) center/56px 64px,linear-gradient(160deg,rgba(51,235,1,.22),transparent 55%)}
   .mat::after{content:"";position:absolute;right:-18%;top:-10%;width:52%;height:42%;background:var(--lime);clip-path:polygon(0 0,100% 0,100% 100%,40% 100%);opacity:.9}
@@ -110,6 +111,43 @@
   .step .n{position:absolute;top:14px;right:18px;font-family:"Saira Extra Condensed",sans-serif;font-weight:800;font-size:2.4rem;color:var(--neon);opacity:.9;line-height:1}
   .step p{color:var(--ink-2)}
 
+  /* O projeto (bloco emocional) */
+  .projeto{background:var(--bg-deep);margin-inline:calc(50% - 50vw);padding-inline:calc(50vw - 50%)}
+  .projeto-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:36px;align-items:start}
+  @media (max-width:760px){ .projeto-grid{grid-template-columns:1fr;gap:24px} }
+  .projeto-texto{display:flex;flex-direction:column;gap:16px;color:var(--ink-2);max-width:62ch;font-size:1.08rem}
+  .projeto-texto .lead{color:var(--ink);font-size:1.3rem;font-weight:600}
+  .frase-forte{font-family:"Saira Extra Condensed",sans-serif;text-transform:uppercase;font-weight:800;font-size:clamp(1.5rem,3.4vw,2.1rem);line-height:1.05;color:var(--neon);border-left:4px solid var(--lime);padding-left:16px;margin-top:8px;display:flex;flex-direction:column;gap:8px}
+  .frase-forte span{font-family:"Source Sans 3",sans-serif;text-transform:none;font-weight:400;font-size:.95rem;color:var(--muted);letter-spacing:0}
+  .projeto-lado{display:flex;flex-direction:column;gap:16px}
+  .foto-ph{position:relative;aspect-ratio:4/3;max-width:100%;border-radius:8px;border:1px solid var(--line);background:var(--hex) center/56px 64px,linear-gradient(160deg,#1f2c1a,#0a0d09 70%)}
+  .garantias{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+  .garantias li{display:flex;gap:12px;align-items:flex-start;color:var(--ink-2);font-size:1rem}
+  .garantias li svg{width:22px;height:22px;flex-shrink:0;color:#0C0C0C;background:var(--lime);border-radius:4px;padding:3px}
+  .garantias b{color:var(--ink)}
+
+  /* Botão final da tela inicial */
+  .cta-final{padding-top:0}
+  .cta-box{border:1px solid var(--accent-line);box-shadow:var(--glow);border-radius:10px;padding:36px 24px;text-align:center;display:flex;flex-direction:column;gap:14px;align-items:center;background:var(--surface);position:relative;overflow:hidden}
+  .cta-box::before{content:"";position:absolute;inset:0;background:var(--hex) center/56px 64px;opacity:.6;pointer-events:none}
+  .cta-box>*{position:relative}
+  .cta-box .lead{text-align:center}
+
+  /* Indicador de etapas */
+  .etapas{list-style:none;margin:20px 0 0;padding:0;display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+  .etapas li{display:flex;flex-direction:column;gap:8px;align-items:flex-start;min-width:0}
+  .etapas li::before{content:"";display:block;width:100%;height:4px;background:var(--line-strong);border-radius:2px}
+  .etapas li.done::before{background:var(--olive)}
+  .etapas li.now::before{background:var(--neon);box-shadow:0 0 10px rgba(51,235,1,.5)}
+  .etapas .dotn{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--surface-2);color:var(--muted);font-size:.8rem;font-weight:700}
+  .etapas .dotn svg{width:14px;height:14px}
+  .etapas li.done .dotn{background:var(--olive);color:#0C0C0C}
+  .etapas li.now .dotn{background:var(--neon);color:#0C0C0C}
+  .etapas .lbl{font-family:"Saira Extra Condensed",sans-serif;text-transform:uppercase;letter-spacing:.08em;font-size:.95rem;color:var(--muted);line-height:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+  .etapas li.now .lbl{color:var(--ink)}
+  .etapas li.done .lbl{color:var(--ink-2)}
+  @media (max-width:560px){ .etapas .lbl{display:none} .etapas li.now .lbl{display:block} }
+
   /* Fluxo 1 -> 2 -> 3 */
   .flow{list-style:none;margin:0 0 28px;padding:0;display:grid;grid-template-columns:1fr auto 1fr auto 1fr;gap:12px;align-items:stretch;counter-reset:none}
   .flow .step{position:relative}
@@ -130,7 +168,9 @@
   .step .mini span{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line-strong);background:var(--bg-deep);border-radius:4px;padding:6px 10px;font-size:.9rem;font-weight:700;color:var(--ink-2)}
   .step .mini svg{color:var(--neon)}
   .modos{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-  @media (max-width:760px){ .modos{grid-template-columns:1fr} }
+  @media (max-width:900px){ .modos{grid-template-columns:1fr} }
+  .modo{min-width:0}
+  .modo .btn{white-space:normal;text-align:center}
   .modo{display:flex;flex-direction:column;gap:14px;padding:24px;border-radius:var(--radius);text-decoration:none;color:var(--ink);background:var(--surface);border:1px solid var(--line);transition:border-color .12s,transform .12s}
   .modo:nth-child(2){border-color:var(--accent-line);box-shadow:var(--glow)}
   @media (hover:hover){ .modo:hover{border-color:var(--neon);transform:translateY(-2px)} }
@@ -299,7 +339,7 @@
   .idle-box{background:var(--surface);color:var(--ink);border:1px solid var(--accent-line);border-radius:8px;padding:28px;max-width:440px;width:100%;display:flex;flex-direction:column;gap:14px;text-align:center;box-shadow:var(--shadow),var(--glow)}
 
   /* Fita de isolamento da marca, usada aqui como aviso de esboço */
-  .sketch-banner{background:var(--lime);color:#0C0C0C;font-family:"Saira Extra Condensed",sans-serif;font-weight:800;text-transform:uppercase;letter-spacing:.22em;font-size:.85rem;text-align:center;padding:7px 16px;white-space:nowrap;overflow:hidden}
+  .sketch-banner{background:var(--lime);color:#0C0C0C;font-family:"Saira Extra Condensed",sans-serif;font-weight:800;text-transform:uppercase;letter-spacing:.22em;font-size:.85rem;text-align:center;padding:7px 16px;white-space:nowrap;overflow:hidden;display:flex;justify-content:center}
 </style>
 
 <div class="sketch-banner">▲ Esboço navegável ▲ Nomes, fotos e valores são exemplos ▲ Esboço navegável ▲</div>
@@ -311,9 +351,7 @@
       <span id="brand-name">Battlefield<small>Jiu-Jitsu</small></span>
     </a>
     <nav class="nav" aria-label="Principal">
-      <a href="#/atletas" data-nav="atletas">Atletas</a>
-      <a href="#/equipe" data-nav="equipe">Equipe</a>
-      <a href="#/#como-funciona" class="hide-sm" data-nav="como">Como funciona</a>
+      <a href="#/" id="nav-inicio" class="hide-sm">Início</a>
       <a class="cartbtn empty" id="cartbtn" href="#/checkout" aria-label="Sua escolha">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>
         <span class="hide-sm">Sua escolha</span>
@@ -357,6 +395,17 @@ const EQUIPE = {
   academia: "Battlefield Jiu-Jitsu",
   cidade: "Balneário Camboriú, SC",
   desde: 2021,
+  chamada: "Eles já têm a garra. Falta o quimono, a inscrição e alguém que acredite. Escolha uma criança ou a equipe e patrocine o que ela precisa para competir.",
+  proposito: {
+    titulo: "Um projeto para quem nunca teve chance de estar no tatame.",
+    paragrafos: [
+      "O Battlefield Jiu-Jitsu nasceu em 2021 dentro do clube, com uma ideia simples: abrir o tatame de graça para crianças e adolescentes do bairro que nunca teriam como pagar uma academia.",
+      "O jiu-jitsu ensina o que a rua não ensina. Disciplina, respeito, saber perder e voltar no dia seguinte. Hoje são dezenas de alunos treinando quatro vezes por semana, e os melhores já competem e ganham.",
+      "O que ainda falta é o básico que separa quem treina de quem compete: um quimono do tamanho certo, a inscrição do campeonato, o transporte até o ginásio. É isso que você pode patrocinar aqui."
+    ],
+    frase: "Não é caridade. É investimento em uma criança que vai devolver em disciplina, em medalha e em exemplo.",
+    autor: "Professor da equipe (texto de exemplo)"
+  },
   apresentacao: [
     "Somos um projeto social que usa o jiu-jitsu para tirar crianças e adolescentes da rua e colocá-los no tatame. Os treinos são gratuitos e acontecem quatro vezes por semana.",
     "O que falta para os nossos atletas competirem em pé de igualdade é o básico: quimono do tamanho certo, inscrição nos campeonatos e transporte até o ginásio. É aqui que você entra."
@@ -585,6 +634,14 @@ function tabs(alvo, quem, itens){
     ${t === "unico" ? catalogo(alvo, itens) : mensal(alvo, quem)}`;
 }
 
+const ETAPAS = ["Forma de apoio", "Quem apoiar", "Escolha", "Pagamento"];
+function stepper(atual){
+  return `<ol class="etapas" aria-label="Etapas">${ETAPAS.map((e, i) => {
+    const n = i + 1, st = n < atual ? "done" : n === atual ? "now" : "";
+    return `<li class="${st}"><span class="dotn">${n < atual ? ICONS.check : n}</span><span class="lbl">${e}</span></li>`;
+  }).join("")}</ol>`;
+}
+
 function metaBox(m, label){
   const pct = Math.min(100, Math.round(m.arrecadado / m.meta * 100));
   return `
@@ -605,10 +662,9 @@ function pageHome(){
         <div class="hero-copy">
           <span class="eyebrow">Battlefield Clube de Tiro · Tatame · Equipe juvenil</span>
           <h1>Coloque uma criança <span class="g">no tatame.</span></h1>
-          <p class="lead">${esc(EQUIPE.apresentacao[0])}</p>
+          <p class="lead">${esc(EQUIPE.chamada)}</p>
           <div class="hero-ctas">
-            <a class="btn btn-primary btn-lg" href="#/atletas">Escolher um atleta</a>
-            <a class="btn btn-secondary btn-lg" href="#/equipe">Patrocinar a equipe</a>
+            <a class="btn btn-primary btn-lg" href="#/apoiar">Ajudar a realizar um sonho ${ICONS.arrow}</a>
           </div>
           <div class="stat-strip">
             ${EQUIPE.stats.map(s => `<div class="stat"><b class="num">${esc(s.valor)}</b><span>${esc(s.label)}</span></div>`).join("")}
@@ -621,6 +677,27 @@ function pageHome(){
             <span class="mat-stat num">Desde ${EQUIPE.desde}</span>
             <span class="mat-label">${esc(EQUIPE.cidade)} · treinos gratuitos 4x por semana</span>
           </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="projeto" class="projeto">
+      <div class="sec-head">
+        <span class="eyebrow">O projeto</span>
+        <h2>${esc(EQUIPE.proposito.titulo)}</h2>
+      </div>
+      <div class="projeto-grid">
+        <div class="projeto-texto">
+          ${EQUIPE.proposito.paragrafos.map((t, i) => `<p class="${i === 0 ? "lead" : ""}">${esc(t)}</p>`).join("")}
+          <p class="frase-forte">“${esc(EQUIPE.proposito.frase)}”<span>${esc(EQUIPE.proposito.autor)}</span></p>
+        </div>
+        <div class="projeto-lado">
+          <div class="foto-ph" aria-hidden="true"><span class="mat-pill">Foto do treino</span></div>
+          <ul class="garantias">
+            <li>${ICONS.check} <span><b>100% repassado.</b> Cada real vira o item que você escolheu.</span></li>
+            <li>${ICONS.check} <span><b>Prestação de contas mensal,</b> com foto do que foi comprado.</span></li>
+            <li>${ICONS.check} <span><b>Agradecimento do atleta</b> quando o item chega.</span></li>
+          </ul>
         </div>
       </div>
     </section>
@@ -653,9 +730,31 @@ function pageHome(){
           <div class="mini"><span>${ICONS.pix} Pix</span><span>${ICONS.card} Cartão</span></div>
         </li>
       </ol>
+    </section>
 
+    <section class="cta-final">
+      <div class="cta-box">
+        <span class="eyebrow">Comece agora</span>
+        <h2>Leva menos de dois minutos.</h2>
+        <p class="lead">Toque no botão para escolher como e quem você quer apoiar.</p>
+        <a class="btn btn-primary btn-lg" href="#/apoiar">Ajudar a realizar um sonho ${ICONS.arrow}</a>
+      </div>
+    </section>`;
+}
+
+/* Tela 2: pontual ou mensal */
+function pageApoiar(){
+  return `
+    ${stepper(1)}
+    <section style="padding-top:20px">
+      <a class="back" href="#/">${ICONS.back} Início</a>
+      <div class="sec-head">
+        <span class="eyebrow">Passo 1 de 3</span>
+        <h2>Como você quer apoiar?</h2>
+        <p class="lead">Escolha uma forma agora. Você pode combinar as duas depois.</p>
+      </div>
       <div class="modos">
-        <a class="modo" href="#/atletas?modo=unico">
+        <a class="modo" href="#/quem?modo=unico">
           <div class="modo-head"><div class="ring">${ICONS.gift}</div><div><span class="eyebrow">Pontual</span><h3>Patrocine um item, uma vez</h3></div></div>
           <p>Você paga o custo de algo concreto e a equipe entrega para o atleta.</p>
           <ul class="ex">
@@ -665,7 +764,7 @@ function pageHome(){
           </ul>
           <span class="btn btn-primary">Quero patrocinar um item ${ICONS.arrow}</span>
         </a>
-        <a class="modo" href="#/atletas?modo=mensal">
+        <a class="modo" href="#/quem?modo=mensal">
           <div class="modo-head"><div class="ring">${ICONS.cal}</div><div><span class="eyebrow">Mensal</span><h3>Seja padrinho ou madrinha</h3></div></div>
           <p>Um valor fixo todo mês, que garante treino e competição o ano inteiro. Cancele quando quiser.</p>
           <ul class="ex">
@@ -674,47 +773,44 @@ function pageHome(){
           <span class="btn btn-secondary">Quero ser padrinho mensal ${ICONS.arrow}</span>
         </a>
       </div>
-    </section>
+    </section>`;
+}
 
-    <section>
+/* Tela 3: um atleta ou a equipe */
+function pageQuem(){
+  const modo = ui.modoPadrao || "unico";
+  return `
+    ${stepper(2)}
+    <section style="padding-top:20px">
+      <a class="back" href="#/apoiar">${ICONS.back} Trocar a forma de apoio</a>
       <div class="sec-head">
-        <span class="eyebrow">Quem você quer apoiar?</span>
-        <h2>Escolha um caminho.</h2>
+        <span class="eyebrow">Passo 2 de 3 · ${modo === "mensal" ? "Apadrinhamento mensal" : "Patrocínio pontual"}</span>
+        <h2>Quem você quer apoiar?</h2>
       </div>
       <div class="choose">
         <a href="#/atletas">
           <div class="avatar-stack">${ATLETAS.slice(0, 4).map(a => avatar(a, "round", false)).join("")}</div>
-          <h3>Patrocinar um atleta</h3>
-          <p class="muted">Conheça a história de cada criança e escolha uma para apadrinhar.</p>
+          <h3>Um atleta</h3>
+          <p class="muted">Conheça a história de cada criança e escolha uma para ${modo === "mensal" ? "apadrinhar" : "patrocinar"}.</p>
           <span class="arrow">Ver os ${ATLETAS.length} atletas ${ICONS.arrow}</span>
         </a>
         <a href="#/equipe">
           <div class="ring">${ICONS.mat}</div>
-          <h3>Patrocinar a equipe</h3>
+          <h3>A equipe inteira</h3>
           <p class="muted">Tatame, van, kit de faixas e tudo o que é de todos.</p>
           <span class="arrow">Ver as necessidades da equipe ${ICONS.arrow}</span>
         </a>
-      </div>
-    </section>
-
-    <section>
-      <div class="sec-head">
-        <span class="eyebrow">Transparência</span>
-        <h2>Para onde vai o dinheiro</h2>
-      </div>
-      <div class="trans">
-        <div><b>100% repassado</b><p>Cada real vai para o projeto. O item que você escolhe é comprado ou pago diretamente pela equipe.</p></div>
-        <div><b>Prestação de contas</b><p>Todo mês publicamos o que foi arrecadado e o que foi comprado, com foto.</p></div>
-        <div><b>Você recebe o agradecimento</b><p>O atleta que você apoiou manda uma mensagem quando o item chega.</p></div>
       </div>
     </section>`;
 }
 
 function pageAtletas(){
   return `
-    <section>
+    ${stepper(3)}
+    <section style="padding-top:20px">
+      <a class="back" href="#/quem">${ICONS.back} Voltar</a>
       <div class="sec-head">
-        <span class="eyebrow">Nossos atletas</span>
+        <span class="eyebrow">Passo 3 de 3 · Nossos atletas</span>
         <h2>Escolha quem você quer apadrinhar.</h2>
         <p class="lead">Cada card abre a história completa e a lista do que cada um precisa.</p>
       </div>
@@ -738,7 +834,8 @@ function pageAtleta(id){
   if (!a) return `<section><div class="empty"><h2>Atleta não encontrado</h2><a class="btn btn-secondary" href="#/atletas">Ver todos os atletas</a></div></section>`;
   const alvo = { tipo: "atleta", id: a.id };
   return `
-    <section style="padding-top:28px">
+    ${stepper(3)}
+    <section style="padding-top:20px">
       <a class="back" href="#/atletas">${ICONS.back} Todos os atletas</a>
       <div class="profile">
         <div>
@@ -772,8 +869,9 @@ function pageAtleta(id){
 function pageEquipe(){
   const alvo = { tipo: "equipe", id: "equipe" };
   return `
-    <section style="padding-top:28px">
-      <a class="back" href="#/">${ICONS.back} Início</a>
+    ${stepper(3)}
+    <section style="padding-top:20px">
+      <a class="back" href="#/quem">${ICONS.back} Voltar</a>
       <div class="profile">
         <div>
           <div class="mat" style="aspect-ratio:3/4;border-radius:18px" aria-hidden="true">
@@ -808,14 +906,15 @@ function pageCheckout(){
       <div class="ring" style="width:64px;height:64px">${ICONS.heart}</div>
       <h2>Você ainda não escolheu nada.</h2>
       <p class="muted">Escolha um atleta ou a equipe para começar.</p>
-      <div class="share"><a class="btn btn-primary" href="#/atletas">Ver atletas</a><a class="btn btn-secondary" href="#/equipe">Patrocinar a equipe</a></div>
+      <div class="share"><a class="btn btn-primary btn-lg" href="#/apoiar">Ajudar a realizar um sonho ${ICONS.arrow}</a></div>
     </div></section>`;
 
   const groups = {};
   cart.forEach((l, i) => { const k = l.alvo.tipo + "|" + l.alvo.id; (groups[k] = groups[k] || { alvo: l.alvo, lines: [] }).lines.push({ ...l, i }); });
   const t = totals();
   return `
-    <section style="padding-top:28px">
+    ${stepper(4)}
+    <section style="padding-top:20px">
       <div class="sec-head" style="flex-direction:row;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:12px"><div><span class="eyebrow">Sua escolha</span><h2>Confira o que você escolheu.</h2></div><button class="btn btn-secondary btn-sm" data-reset="1">Recomeçar</button></div>
       <div class="checkout">
         <div class="panel">
@@ -896,6 +995,8 @@ function route(){
   const modo = new URLSearchParams(query || "").get("modo");
   if (modo === "unico" || modo === "mensal") ui.modoPadrao = modo;
   const [path, arg] = h.split("/");
+  if (path === "apoiar") return { page: "apoiar" };
+  if (path === "quem") return { page: "quem" };
   if (path === "atletas") return { page: "atletas" };
   if (path === "atleta" && arg) return { page: "atleta", id: arg };
   if (path === "equipe") return { page: "equipe" };
@@ -907,13 +1008,15 @@ function route(){
 function render(){
   const r = route();
   const app = document.getElementById("app");
-  app.innerHTML = r.page === "atletas" ? pageAtletas()
+  app.innerHTML = r.page === "apoiar" ? pageApoiar()
+    : r.page === "quem" ? pageQuem()
+    : r.page === "atletas" ? pageAtletas()
     : r.page === "atleta" ? pageAtleta(r.id)
     : r.page === "equipe" ? pageEquipe()
     : r.page === "checkout" ? pageCheckout()
     : r.page === "obrigado" ? pageObrigado()
     : pageHome();
-  document.querySelectorAll("[data-nav]").forEach(a => a.classList.toggle("active", a.dataset.nav === r.page));
+  document.getElementById("nav-inicio").hidden = r.page === "home";
   document.title = `${EQUIPE.nome}`;
   syncCart();
   if (r.anchor) { const el = document.getElementById(r.anchor); if (el) el.scrollIntoView(); }
