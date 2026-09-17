@@ -75,7 +75,7 @@
   .btn-secondary:hover{background:var(--surface-2)}
   .btn-ghost{background:transparent;color:var(--accent);padding-inline:8px}
   .btn-lg{padding:15px 24px;font-size:1.05rem}
-  .btn-sm{padding:8px 12px;font-size:.9rem;border-radius:8px}
+  .btn-sm{padding:10px 14px;font-size:.95rem;border-radius:8px;min-height:44px}
   .btn[disabled]{opacity:.55;cursor:not-allowed}
 
   /* Sections */
@@ -115,7 +115,7 @@
   .choose{display:grid;grid-template-columns:1fr 1fr;gap:16px}
   @media (max-width:720px){ .choose{grid-template-columns:1fr} }
   .choose a{display:flex;flex-direction:column;gap:14px;padding:26px;border-radius:var(--radius);text-decoration:none;color:var(--ink);background:var(--surface);border:1px solid var(--line);transition:border-color .12s,transform .12s}
-  .choose a:hover{border-color:var(--accent-line);transform:translateY(-2px)}
+  @media (hover:hover){ .choose a:hover{border-color:var(--accent-line);transform:translateY(-2px)} }
   .choose .arrow{margin-top:auto;color:var(--accent);font-weight:600;display:flex;align-items:center;gap:6px}
   .avatar-stack{display:flex}
   .avatar-stack .avatar{width:44px;height:44px;margin-left:-10px;border:3px solid var(--surface);font-size:.9rem}
@@ -133,7 +133,7 @@
   @media (max-width:860px){ .grid-atletas{grid-template-columns:repeat(2,1fr)} }
   @media (max-width:520px){ .grid-atletas{grid-template-columns:1fr} }
   .card-atleta{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;display:flex;flex-direction:column;text-decoration:none;color:var(--ink);transition:border-color .12s,transform .12s}
-  .card-atleta:hover{border-color:var(--accent-line);transform:translateY(-2px)}
+  @media (hover:hover){ .card-atleta:hover{border-color:var(--accent-line);transform:translateY(-2px)} }
   .card-atleta .avatar{width:100%;aspect-ratio:4/3;border-radius:0;font-size:3rem}
   .card-atleta .body{padding:16px;display:flex;flex-direction:column;gap:8px;flex:1}
   .card-atleta .meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap;color:var(--muted);font-size:.9rem}
@@ -161,7 +161,7 @@
 
   /* Tabs + catalog */
   .tabs{display:flex;gap:6px;background:var(--surface-2);padding:5px;border-radius:12px;width:fit-content;max-width:100%}
-  .tabs button{border:0;background:transparent;padding:10px 16px;border-radius:9px;font-weight:600;cursor:pointer;color:var(--ink-2)}
+  .tabs button{border:0;background:transparent;padding:14px 18px;border-radius:9px;font-weight:600;cursor:pointer;color:var(--ink-2)}
   .tabs button[aria-selected="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.08)}
   .catalog{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:var(--radius);background:var(--surface);overflow:hidden}
   .item{display:grid;grid-template-columns:44px 1fr auto;gap:14px;align-items:center;padding:16px;border-top:1px solid var(--line)}
@@ -174,7 +174,7 @@
   @media (max-width:520px){ .item .act{justify-self:start;width:100%;justify-content:space-between} }
   .price{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:1.3rem;white-space:nowrap}
   .stepper{display:inline-flex;align-items:center;border:1px solid var(--line-strong);border-radius:9px;overflow:hidden}
-  .stepper button{border:0;background:var(--surface);width:34px;height:34px;cursor:pointer;font-size:1.1rem;font-weight:600}
+  .stepper button{border:0;background:var(--surface);width:44px;height:44px;cursor:pointer;font-size:1.1rem;font-weight:600}
   .stepper button:hover{background:var(--surface-2)}
   .stepper output{min-width:30px;text-align:center;font-weight:600}
   .stepper.zero output{color:var(--muted)}
@@ -183,7 +183,7 @@
   .input.money{width:140px}
   .plans{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
   @media (max-width:560px){ .plans{grid-template-columns:repeat(2,1fr)} }
-  .plan{border:1px solid var(--line-strong);background:var(--surface);border-radius:12px;padding:14px;cursor:pointer;text-align:left;display:flex;flex-direction:column;gap:4px}
+  .plan{border:1px solid var(--line-strong);background:var(--surface);border-radius:12px;padding:16px;min-height:88px;cursor:pointer;text-align:left;display:flex;flex-direction:column;gap:4px}
   .plan[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft);box-shadow:inset 0 0 0 1px var(--accent)}
   .plan b{font-family:"Barlow Condensed",sans-serif;font-size:1.5rem;font-weight:800}
   .plan span{color:var(--muted);font-size:.85rem}
@@ -209,7 +209,7 @@
   .line:first-of-type{border-top:0}
   .line .t{font-weight:500}
   .line .s{color:var(--muted);font-size:.85rem}
-  .line .rm{border:0;background:transparent;color:var(--muted);cursor:pointer;padding:6px;border-radius:6px}
+  .line .rm{border:0;background:transparent;color:var(--muted);cursor:pointer;padding:12px;border-radius:6px;min-width:44px;min-height:44px}
   .line .rm:hover{color:var(--ink);background:var(--surface-2)}
   .totals{display:flex;flex-direction:column;gap:8px;border-top:2px solid var(--line-strong);padding-top:12px}
   .totals .row{display:flex;justify-content:space-between;align-items:baseline}
@@ -241,6 +241,9 @@
   footer .wrap{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
   .toast{position:fixed;left:50%;bottom:calc(96px + env(safe-area-inset-bottom,0px));transform:translateX(-50%) translateY(20px);opacity:0;background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:999px;font-weight:600;pointer-events:none;transition:all .2s;z-index:30;max-width:calc(100% - 32px);text-align:center}
   .toast.show{opacity:1;transform:translateX(-50%)}
+  .idle[hidden]{display:none}
+  .idle{position:fixed;inset:0;z-index:40;background:rgba(15,19,28,.6);display:grid;place-items:center;padding:16px}
+  .idle-box{background:var(--surface);color:var(--ink);border-radius:18px;padding:28px;max-width:420px;width:100%;display:flex;flex-direction:column;gap:14px;text-align:center;box-shadow:var(--shadow)}
   .sketch-banner{background:var(--ink);color:var(--bg);font-size:.8rem;text-align:center;padding:6px 16px;letter-spacing:.04em}
 </style>
 
@@ -256,9 +259,9 @@
       <a href="#/atletas" data-nav="atletas">Atletas</a>
       <a href="#/equipe" data-nav="equipe">Equipe</a>
       <a href="#/#como-funciona" class="hide-sm" data-nav="como">Como funciona</a>
-      <a class="cartbtn empty" id="cartbtn" href="#/checkout" aria-label="Meu apoio">
+      <a class="cartbtn empty" id="cartbtn" href="#/checkout" aria-label="Sua escolha">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>
-        <span class="hide-sm">Meu apoio</span>
+        <span class="hide-sm">Sua escolha</span>
         <span class="count" id="cart-count">0</span>
       </a>
     </nav>
@@ -270,17 +273,24 @@
 <footer>
   <div class="wrap">
     <span id="footer-team">Padrinhos do Tatame · projeto social de jiu-jitsu juvenil</span>
-    <span>Pagamento será integrado na próxima etapa</span>
+    <span>Pagamento será integrado na próxima etapa · toque em qualquer lugar para continuar</span>
   </div>
 </footer>
 
 <div class="cartbar" id="cartbar" aria-live="polite">
   <div class="wrap">
-    <div class="sum"><span class="small muted" id="cartbar-label">Seu apoio</span><b class="num" id="cartbar-total">R$ 0</b></div>
-    <a class="btn btn-primary" href="#/checkout">Ver meu apoio</a>
+    <div class="sum"><span class="small muted" id="cartbar-label">Sua escolha</span><b class="num" id="cartbar-total">R$ 0</b></div>
+    <a class="btn btn-primary" href="#/checkout">Finalizar</a>
   </div>
 </div>
 <div class="toast" id="toast" role="status"></div>
+<div class="idle" id="idle" hidden role="dialog" aria-labelledby="idle-title">
+  <div class="idle-box">
+    <h2 id="idle-title">Ainda está aí?</h2>
+    <p class="muted">Sem toque na tela, sua escolha é apagada em <b id="idle-count" class="num">20</b> segundos.</p>
+    <div class="share"><button class="btn btn-primary btn-lg" id="idle-continue">Continuar</button><button class="btn btn-secondary btn-lg" id="idle-reset">Recomeçar</button></div>
+  </div>
+</div>
 
 <script>
 /* =========================================================
@@ -375,11 +385,10 @@ const PLANOS = [
    ESTADO
    ========================================================= */
 let cart = [];
-try { cart = JSON.parse(localStorage.getItem("bjj-cart") || "[]"); if (!Array.isArray(cart)) cart = []; } catch (e) { cart = []; }
 let ultimoApoio = null;
 const ui = { tab: {}, plano: {} };
 
-function saveCart(){ try { localStorage.setItem("bjj-cart", JSON.stringify(cart)); } catch (e) {} }
+function saveCart(){ /* totem compartilhado: nada fica gravado entre uma pessoa e outra */ }
 const brl = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 });
 const money = v => brl.format(v);
 const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
@@ -709,7 +718,7 @@ function pageCheckout(){
   const t = totals();
   return `
     <section style="padding-top:28px">
-      <div class="sec-head"><span class="eyebrow">Meu apoio</span><h2>Confira o que você escolheu.</h2></div>
+      <div class="sec-head" style="flex-direction:row;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:12px"><div><span class="eyebrow">Sua escolha</span><h2>Confira o que você escolheu.</h2></div><button class="btn btn-secondary btn-sm" data-reset="1">Recomeçar</button></div>
       <div class="checkout">
         <div class="panel">
           <div class="lines">
@@ -734,18 +743,17 @@ function pageCheckout(){
         </div>
 
         <form class="panel form" id="form-apoio" novalidate>
-          <h3>Seus dados</h3>
-          <div class="field"><label for="f-nome">Nome</label><input class="input" id="f-nome" name="nome" required placeholder="Como você quer ser chamado" autocomplete="name"></div>
-          <div class="field"><label for="f-email">E-mail</label><input class="input" id="f-email" name="email" type="email" required placeholder="para enviar o recibo e as novidades" autocomplete="email"></div>
-          <div class="field"><label for="f-fone">WhatsApp <span class="muted">(opcional)</span></label><input class="input" id="f-fone" name="fone" type="tel" placeholder="(11) 99999-9999" autocomplete="tel"></div>
+          <h3>Quem está apoiando?</h3>
+          <div class="field"><label for="f-nome">Seu primeiro nome</label><input class="input" id="f-nome" name="nome" required placeholder="Para o atleta saber quem agradecer" autocomplete="off"></div>
+          <div class="field"><label for="f-fone">WhatsApp <span class="muted">(opcional, para receber a foto do item e o recibo)</span></label><input class="input" id="f-fone" name="fone" type="tel" placeholder="(11) 99999-9999" autocomplete="off" inputmode="tel"></div>
           <div class="field"><label for="f-msg">Mensagem para o atleta <span class="muted">(opcional)</span></label><textarea class="input" id="f-msg" name="msg" placeholder="Um incentivo curto que vai ser lido no tatame"></textarea></div>
           <label class="check"><input type="checkbox" id="f-publico" name="publico" checked> Pode mostrar meu primeiro nome na lista de padrinhos e madrinhas</label>
           <div class="pay-placeholder">
             <b>Pagamento</b>
             <span class="small">Este bloco será substituído pelo meio de pagamento na próxima etapa.</span>
-            <div class="methods"><span>Pix</span><span>Cartão de crédito</span><span>Boleto</span></div>
+            <div class="methods"><span>Pix com QR code na tela</span><span>Cartão na maquininha</span></div>
           </div>
-          <button class="btn btn-primary btn-lg" type="submit">Confirmar apoio</button>
+          <button class="btn btn-primary btn-lg" type="submit">Ir para o pagamento</button>
           <p class="muted small">Ao confirmar você concorda que o valor será repassado ao projeto para a finalidade escolhida.</p>
         </form>
       </div>
@@ -757,21 +765,20 @@ function pageObrigado(){
   if (!u) return `<section><div class="empty"><h2>Nada por aqui ainda.</h2><a class="btn btn-primary" href="#/">Voltar ao início</a></div></section>`;
   const nomes = [...new Set(u.cart.map(l => alvoNome(l.alvo)))];
   const quem = nomes.length === 1 ? (nomes[0] === "Equipe" ? "a equipe" : nomes[0]) : nomes.slice(0, -1).join(", ") + " e " + nomes.slice(-1);
-  const texto = encodeURIComponent(`Acabei de apadrinhar ${quem} no projeto ${EQUIPE.nome}. Vem também: ${location.href.split("#")[0]}`);
   return `
     <section><div class="thanks">
       <div class="big">${ICONS.check}</div>
       <span class="eyebrow">Apoio confirmado</span>
       <h1 style="font-size:clamp(2rem,6vw,3.4rem)">Obrigado, ${esc(u.nome.split(" ")[0])}!</h1>
-      <p class="lead" style="text-align:center">Você acabou de mudar o mês de ${esc(quem)}. Assim que o item chegar, você recebe uma foto e uma mensagem.</p>
+      <p class="lead" style="text-align:center">Você acabou de mudar o mês de ${esc(quem)}.${u.fone ? " Assim que o item chegar, você recebe a foto no WhatsApp." : ""}</p>
       <div class="panel" style="width:100%;text-align:left">
         ${u.cart.map(l => `<div class="line"><div><div class="t">${esc(l.nome)}${l.qtd > 1 ? ` × ${l.qtd}` : ""}</div><div class="s">para ${esc(alvoNome(l.alvo))}</div></div><span class="price num">${money(l.valor * l.qtd)}${l.tipo === "mensal" ? '<span class="muted small">/mês</span>' : ""}</span><span></span></div>`).join("")}
         ${u.msg ? `<div class="note info">Sua mensagem: “${esc(u.msg)}”</div>` : ""}
       </div>
       <div class="share">
-        <a class="btn btn-primary" target="_blank" rel="noopener" href="https://wa.me/?text=${texto}">Compartilhar no WhatsApp</a>
-        <a class="btn btn-secondary" href="#/atletas">Apoiar mais um atleta</a>
+        <a class="btn btn-primary btn-lg" href="#/">Concluir</a>
       </div>
+      <p class="muted small">A tela volta ao início sozinha em <span id="thanks-count" class="num">20</span> segundos.</p>
     </div></section>`;
 }
 
@@ -847,6 +854,7 @@ document.getElementById("app").addEventListener("click", e => {
     document.getElementById("patrocinar").scrollIntoView({ block: "start" });
     return;
   }
+  if (b.dataset.reset){ resetSessao(); return; }
   if (b.dataset.qty !== undefined){ changeQty(Number(b.dataset.qty), Number(b.dataset.d)); return; }
   if (b.dataset.rm !== undefined){ removeLine(Number(b.dataset.rm)); return; }
 });
@@ -861,14 +869,55 @@ document.getElementById("app").addEventListener("submit", e => {
   if (e.target.id !== "form-apoio") return;
   e.preventDefault();
   const f = e.target;
-  const nome = f.nome.value.trim(), email = f.email.value.trim();
+  const nome = f.nome.value.trim(), fone = f.fone.value.trim();
   if (!nome) { f.nome.focus(); toast("Digite seu nome"); return; }
-  if (!email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { f.email.focus(); toast("Digite um e-mail válido"); return; }
-  ultimoApoio = { nome, email, msg: f.msg.value.trim(), publico: f.publico.checked, cart: cart.map(l => ({ ...l })), quando: new Date().toISOString() };
+  ultimoApoio = { nome, fone, msg: f.msg.value.trim(), publico: f.publico.checked, cart: cart.map(l => ({ ...l })), quando: new Date().toISOString() };
   cart = []; saveCart(); syncCart();
   location.hash = "#/obrigado";
 });
 
-window.addEventListener("hashchange", render);
+/* =========================================================
+   MODO TOTEM
+   Aparelho compartilhado: sem histórico, sem login. Depois de
+   um tempo sem toque, tudo é limpo e a tela volta ao início.
+   ========================================================= */
+const INATIVIDADE_AVISO_S = 60;   // segundos sem toque até perguntar "ainda está aí?"
+const INATIVIDADE_LIMITE_S = 20;  // segundos do aviso até limpar tudo
+const OBRIGADO_S = 20;            // segundos na tela de obrigado até voltar ao início
+let idleT, idleCount, thanksT;
+
+function resetSessao(){
+  cart = []; ultimoApoio = null; ui.tab = {}; ui.plano = {};
+  document.getElementById("idle").hidden = true;
+  clearInterval(idleCount); clearInterval(thanksT);
+  if (location.hash === "#/" || location.hash === "") render(); else location.hash = "#/";
+  syncCart();
+}
+function armIdle(){
+  clearTimeout(idleT); clearInterval(idleCount);
+  const idle = document.getElementById("idle");
+  if (!idle.hidden) return;
+  // Na tela inicial sem nada escolhido não há o que limpar.
+  const home = location.hash === "#/" || location.hash === "";
+  if (home && !cart.length) return;
+  idleT = setTimeout(() => {
+    let n = INATIVIDADE_LIMITE_S;
+    document.getElementById("idle-count").textContent = n;
+    idle.hidden = false;
+    idleCount = setInterval(() => { n--; document.getElementById("idle-count").textContent = n; if (n <= 0) resetSessao(); }, 1000);
+  }, INATIVIDADE_AVISO_S * 1000);
+}
+["pointerdown", "keydown", "touchstart", "scroll"].forEach(ev => window.addEventListener(ev, () => { if (document.getElementById("idle").hidden) armIdle(); }, { passive: true }));
+document.getElementById("idle-continue").addEventListener("click", () => { document.getElementById("idle").hidden = true; clearInterval(idleCount); armIdle(); });
+document.getElementById("idle-reset").addEventListener("click", resetSessao);
+
+function armThanks(){
+  clearInterval(thanksT);
+  if (!location.hash.startsWith("#/obrigado")) return;
+  let n = OBRIGADO_S;
+  thanksT = setInterval(() => { n--; const el = document.getElementById("thanks-count"); if (el) el.textContent = n; if (n <= 0) resetSessao(); }, 1000);
+}
+
+window.addEventListener("hashchange", () => { render(); armIdle(); armThanks(); });
 render();
 </script>

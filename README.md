@@ -15,6 +15,18 @@ Plataforma de patrocínio de atletas juvenis de jiu-jitsu, no modelo de lista de
 
 Ainda não há integração de pagamento. O bloco no checkout marca onde ela entra.
 
+## Modo totem
+
+A página foi pensada para rodar num totem de autoatendimento, em tela de toque, num lugar físico:
+
+- Nada fica gravado entre uma pessoa e outra. "Sua escolha" é só a seleção atual, não um histórico.
+- Depois de 60 segundos sem toque aparece a pergunta "Ainda está aí?" e, 20 segundos depois, tudo é limpo e a tela volta ao início.
+- A tela de obrigado volta ao início sozinha em 20 segundos.
+- Só o primeiro nome é obrigatório no fechamento. WhatsApp e mensagem são opcionais.
+- Botões e alvos de toque têm no mínimo 44px.
+
+Os tempos ficam nas constantes `INATIVIDADE_AVISO_S`, `INATIVIDADE_LIMITE_S` e `OBRIGADO_S` no início do bloco "MODO TOTEM" do script.
+
 ## Como ver
 
 Abra `index.html` no navegador. Não precisa de servidor.
