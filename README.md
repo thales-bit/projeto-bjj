@@ -6,11 +6,11 @@ Plataforma de patrocínio dos atletas juvenis do Battlefield Jiu-Jitsu (Balneár
 
 `index.html` é um esboço navegável, em arquivo único, com dados de exemplo. Todas as páginas já existem:
 
-- Início: apresentação da equipe, "como funciona" em 3 passos, escolha entre atleta ou equipe, transparência.
+- Início: apresentação da equipe, fluxo "como funciona" em 3 passos com setas, dois cartões explicando patrocínio pontual e apadrinhamento mensal (com atalho que já abre o atleta no modo escolhido), escolha entre atleta ou equipe, transparência.
 - Atletas: grade com foto, idade, faixa e frase de cada atleta.
 - Perfil do atleta: história, conquistas, meta do mês, catálogo de patrocínio único e apadrinhamento mensal.
 - Equipe: mesma estrutura, com itens coletivos.
-- Meu apoio: resumo das escolhas, dados do apoiador, mensagem para o atleta, bloco reservado para o pagamento.
+- Sua escolha: resumo das escolhas, opção de apoiar com nome ou de forma anônima, WhatsApp e mensagem opcionais, bloco reservado para o pagamento.
 - Obrigado: confirmação e compartilhamento.
 
 Ainda não há integração de pagamento. O bloco no checkout marca onde ela entra.
