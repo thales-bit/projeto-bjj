@@ -35,6 +35,10 @@ Segue o briefing do Battlefield Clube de Tiro: sempre em modo escuro, verde neon
 
 Abra `index.html` no navegador. Não precisa de servidor.
 
+## Publicar na Vercel
+
+O projeto é estático, sem build. Na Vercel: **Add New → Project → Import** este repositório, preset **Other**, sem comando de build e sem pasta de saída. Cada push na branch de produção (Settings → Git → Production Branch) publica de novo automaticamente. O `vercel.json` só desliga o cache do HTML para as atualizações aparecerem na hora.
+
 ## Onde trocar os dados
 
 No início do `<script>` em `index.html`, os blocos `EQUIPE`, `ATLETAS`, `ITENS_ATLETA`, `ITENS_EQUIPE` e `PLANOS` concentram todos os textos, valores e metas. As fotos hoje são espaços reservados com a inicial do nome.

@@ -1,3 +1,15 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0C0C0C">
+<style>
+  /* Base mínima (o visualizador do Claude injeta o equivalente; na Vercel precisa estar aqui) */
+  :root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+  img{max-width:100%}
+  [hidden]{display:none!important}
+</style>
 <title>Battlefield Jiu-Jitsu</title>
 <meta name="description" content="Totem de patrocínio dos atletas juvenis do Battlefield Jiu-Jitsu.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -341,7 +353,8 @@
   /* Fita de isolamento da marca, usada aqui como aviso de esboço */
   .sketch-banner{background:var(--lime);color:#0C0C0C;font-family:"Saira Extra Condensed",sans-serif;font-weight:800;text-transform:uppercase;letter-spacing:.22em;font-size:.85rem;text-align:center;padding:7px 16px;white-space:nowrap;overflow:hidden;display:flex;justify-content:center}
 </style>
-
+</head>
+<body>
 <div class="sketch-banner">▲ Esboço navegável ▲ Nomes, fotos e valores são exemplos ▲ Esboço navegável ▲</div>
 
 <header class="topbar">
@@ -1143,3 +1156,5 @@ function armThanks(){
 window.addEventListener("hashchange", () => { render(); armIdle(); armThanks(); });
 render();
 </script>
+</body>
+</html>
