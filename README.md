@@ -1,6 +1,6 @@
-# Padrinhos do Tatame
+# Battlefield Jiu-Jitsu · Totem de patrocínio
 
-Plataforma de patrocínio de atletas juvenis de jiu-jitsu, no modelo de lista de presentes de casamento: o apoiador escolhe um item (quimono, inscrição, faixa...) ou um valor mensal para um atleta ou para a equipe, e o valor é repassado ao projeto.
+Plataforma de patrocínio dos atletas juvenis do Battlefield Jiu-Jitsu (Balneário Camboriú, SC), no modelo de lista de presentes de casamento: o apoiador escolhe um item (quimono, inscrição, faixa...) ou um valor mensal para um atleta ou para a equipe, e o valor é repassado ao projeto.
 
 ## Estado atual
 
@@ -26,6 +26,10 @@ A página foi pensada para rodar num totem de autoatendimento, em tela de toque,
 - Botões e alvos de toque têm no mínimo 44px.
 
 Os tempos ficam nas constantes `INATIVIDADE_AVISO_S`, `INATIVIDADE_LIMITE_S` e `OBRIGADO_S` no início do bloco "MODO TOTEM" do script.
+
+## Identidade visual
+
+Segue o briefing do Battlefield Clube de Tiro: sempre em modo escuro, verde neon `#33EB01` e verde-limão `#B3F243` sobre preto `#0C0C0C`, títulos em Saira Extra Condensed em caixa alta, texto em Source Sans 3, hexágonos como elemento gráfico e ícones em círculo preto com anel verde. O hexágono da marca no topo e na capa é um desenho vetorial provisório até o PNG do logo em alta ser embutido.
 
 ## Como ver
 
