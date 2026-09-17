@@ -1,12 +1,12 @@
 # Battlefield Jiu-Jitsu · Totem de patrocínio
 
-Plataforma de patrocínio dos atletas juvenis do Battlefield Jiu-Jitsu (Balneário Camboriú, SC), no modelo de lista de presentes de casamento: o apoiador escolhe um item (quimono, inscrição, faixa...) ou um valor mensal para um atleta ou para a equipe, e o valor é repassado ao projeto.
+Plataforma de patrocínio dos atletas juvenis do Battlefield Jiu-Jitsu (Balneário Camboriú, SC), no modelo de lista de presentes de casamento: os atletas já treinam e competem, e o apoiador escolhe um item do custo de competir (inscrição, filiação, viagem, quimono...) ou um valor mensal para um atleta ou para a equipe. O valor é repassado à equipe.
 
 ## Estado atual
 
 `index.html` é um esboço navegável, em arquivo único, com dados de exemplo. O fluxo é linear, pensado para o totem:
 
-1. **Início:** entrada ("Coloque uma criança no tatame"), bloco emocional sobre o projeto com as garantias de transparência, "como funciona" em 3 passos com setas e um único botão "Ajudar a realizar um sonho".
+1. **Início:** entrada ("Eles já lutam. Ajude a chegar mais longe."), bloco sobre a equipe, os sonhos dos atletas e o custo de competir, com as garantias de transparência, "como funciona" em 3 passos com setas e um único botão "Ajudar a realizar um sonho".
 2. **Como você quer apoiar?** Pontual (itens, pago uma vez) ou mensal (padrinho/madrinha com valor fixo).
 3. **Quem você quer apoiar?** Um atleta ou a equipe inteira.
 4. **Atletas / Perfil do atleta / Equipe:** história, conquistas, meta do mês e o catálogo já aberto no modo escolhido, com a opção de trocar.

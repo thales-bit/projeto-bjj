@@ -11,7 +11,7 @@
   [hidden]{display:none!important}
 </style>
 <title>Battlefield Jiu-Jitsu</title>
-<meta name="description" content="Totem de patrocínio dos atletas juvenis do Battlefield Jiu-Jitsu.">
+<meta name="description" content="Patrocine o próximo campeonato dos atletas juvenis do Battlefield Jiu-Jitsu.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira+Extra+Condensed:wght@700;800&family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&display=swap">
 <style>
@@ -455,7 +455,7 @@
 </style>
 </head>
 <body>
-<div class="sketch-banner"><div class="tape"><span>▲ Esboço navegável</span><span>▲ Valores dos itens ainda por confirmar</span><span>▲ Battlefield Jiu-Jitsu</span><span>▲ Coloque uma criança no tatame</span><span>▲ Esboço navegável</span><span>▲ Valores dos itens ainda por confirmar</span><span>▲ Battlefield Jiu-Jitsu</span><span>▲ Coloque uma criança no tatame</span></div></div>
+<div class="sketch-banner"><div class="tape"><span>▲ Esboço navegável</span><span>▲ Valores dos itens ainda por confirmar</span><span>▲ Battlefield Jiu-Jitsu</span><span>▲ Ajude um atleta a realizar um sonho</span><span>▲ Esboço navegável</span><span>▲ Valores dos itens ainda por confirmar</span><span>▲ Battlefield Jiu-Jitsu</span><span>▲ Ajude um atleta a realizar um sonho</span></div></div>
 
 <header class="topbar">
   <div class="wrap">
@@ -504,22 +504,18 @@ const EQUIPE = {
   nome: "Battlefield Jiu-Jitsu",
   academia: "Battlefield Jiu-Jitsu",
   cidade: "Balneário Camboriú, SC",
-  desde: 2021,
-  chamada: "Eles já têm a garra. Falta o quimono, a inscrição e alguém que acredite. Escolha uma criança ou a equipe e patrocine o que ela precisa para competir.",
+  desde: 2025,
+  chamada: "Nove atletas de 8 a 11 anos que já treinam todo dia e já sobem ao pódio. O que separa cada um do próximo campeonato é a inscrição, a viagem, o quimono. Escolha um atleta ou a equipe e patrocine o próximo passo.",
   proposito: {
-    titulo: "Um projeto para quem nunca teve chance de estar no tatame.",
+    titulo: "Eles já lutam. Falta quem acredite no próximo passo.",
     paragrafos: [
-      "O Battlefield Jiu-Jitsu nasceu em 2021 dentro do clube, com uma ideia simples: abrir o tatame de graça para crianças e adolescentes do bairro que nunca teriam como pagar uma academia.",
-      "O jiu-jitsu ensina o que a rua não ensina. Disciplina, respeito, saber perder e voltar no dia seguinte. Hoje são dezenas de alunos treinando quatro vezes por semana, e os melhores já competem e ganham.",
-      "O que ainda falta é o básico que separa quem treina de quem compete: um quimono do tamanho certo, a inscrição do campeonato, o transporte até o ginásio. É isso que você pode patrocinar aqui."
+      "A equipe juvenil do Battlefield Jiu-Jitsu tem pouco mais de um ano e nove atletas entre 8 e 11 anos. Eles treinam de segunda a sexta, de manhã e à noite, com quimono e sem, sob orientação do mestre Vyctor Buzatto e do professor Gabriel Cortes.",
+      "Nesse tempo vieram mais de 90 medalhas, quatro títulos Sul-Brasileiros, lideranças de ranking e campanhas invictas. E cada um deles escreveu no próprio portfólio aonde quer chegar: o Brasileiro da CBJJ, o Pan-Americano, o Mundial, Abu Dhabi, a faixa preta, viver do jiu-jitsu.",
+      "O que separa esses sonhos da realidade é o custo de competir: inscrições, filiações às federações, viagens, hospedagem, alimentação, quimonos e equipamentos. É isso que você patrocina aqui, para um atleta ou para a equipe inteira."
     ],
-    frase: "Não é caridade. É investimento em uma criança que vai devolver em disciplina, em medalha e em exemplo.",
-    autor: "Professor da equipe (texto de exemplo)"
+    frase: "O dedicado vence o talentoso.",
+    autor: "Oliver, 10 anos, o primeiro aluno da equipe"
   },
-  apresentacao: [
-    "Somos um projeto social que usa o jiu-jitsu para tirar crianças e adolescentes da rua e colocá-los no tatame. Os treinos são gratuitos e acontecem quatro vezes por semana.",
-    "O que falta para os nossos atletas competirem em pé de igualdade é o básico: quimono do tamanho certo, inscrição nos campeonatos e transporte até o ginásio. É aqui que você entra."
-  ],
   professores: "Mestre Vyctor Buzatto e professor Gabriel Cortes",
   stats: [
     { valor: "9", label: "atletas para apadrinhar" },
@@ -528,7 +524,7 @@ const EQUIPE = {
   ],
   metaMes: { arrecadado: 2140, meta: 6000 },
   descricao: [
-    "Patrocinar a equipe cobre o que é de todos: o tatame, a van para os campeonatos, o kit de faixas na graduação e o lanche depois do treino.",
+    "A equipe viaja junta para competir: Circuito Mormaii, Copa Desterro, Sul-Brasileiro, AJP Tour e, em breve, os campeonatos da CBJJ. Patrocinar a equipe cobre o que é de todos: a van, a hospedagem fora da cidade, as filiações e o kit de faixas na graduação.",
     "Cada item abaixo tem um custo real. Você escolhe o que quer bancar e o valor é repassado integralmente para a equipe."
   ]
 };
@@ -626,27 +622,29 @@ const ATLETAS = [
 ];
 
 const ITENS_ATLETA = [
-  { id: "quimono",   nome: "Quimono novo",              desc: "Quimono de competição no tamanho certo",  valor: 350, ico: "gi" },
-  { id: "inscricao", nome: "Inscrição em campeonato",   desc: "Uma inscrição em campeonato oficial",      valor: 120, ico: "medal" },
-  { id: "faixa",     nome: "Faixa nova",                desc: "Faixa da graduação atual, no tamanho certo", valor: 60,  ico: "belt" },
-  { id: "rash",      nome: "Rash guard de treino",      desc: "Uniforme para os treinos sem quimono",      valor: 150, ico: "shirt" },
-  { id: "mensal",    nome: "Mensalidade da academia",   desc: "Um mês de treino na academia parceira",     valor: 180, ico: "cal" },
-  { id: "transp",    nome: "Transporte para competição", desc: "Ida e volta para um campeonato",           valor: 200, ico: "bus" }
+  { id: "inscricao", nome: "Inscrição em campeonato",    desc: "Uma inscrição em campeonato oficial",                    valor: 120, ico: "medal" },
+  { id: "filiacao",  nome: "Filiação à federação",       desc: "Um ano de CBJJ/IBJJF, a porta dos campeonatos nacionais", valor: 250, ico: "cal" },
+  { id: "quimono",   nome: "Quimono de competição",      desc: "Quimono novo no tamanho certo para competir",            valor: 350, ico: "gi" },
+  { id: "rash",      nome: "Rash guard para o No-Gi",    desc: "Uniforme para as competições sem quimono",               valor: 150, ico: "shirt" },
+  { id: "viagem",    nome: "Viagem para um campeonato",  desc: "Ida e volta para competir em outra cidade",              valor: 300, ico: "bus" },
+  { id: "hosped",    nome: "Hospedagem em campeonato",   desc: "Uma noite de hotel para competir fora",                  valor: 250, ico: "mat" },
+  { id: "faixa",     nome: "Faixa nova",                 desc: "Faixa da próxima graduação",                             valor: 60,  ico: "belt" }
 ];
 
 const ITENS_EQUIPE = [
-  { id: "faixas",    nome: "Kit de faixas para graduação", desc: "Faixas novas para toda a turma na próxima graduação", valor: 400, ico: "belt" },
-  { id: "inscr-eq",  nome: "Inscrição da equipe",          desc: "Cota da inscrição coletiva em um campeonato",          valor: 150, ico: "medal" },
-  { id: "van",       nome: "Van para o campeonato",        desc: "Transporte do time inteiro em um dia de competição",     valor: 600, ico: "bus" },
-  { id: "tatame",    nome: "Cota do tatame novo",          desc: "Uma placa de tatame para renovar a área de treino",     valor: 250, ico: "mat" },
-  { id: "lanche",    nome: "Lanche pós-treino do mês",     desc: "Fruta e suco depois do treino durante um mês",          valor: 300, ico: "apple" }
+  { id: "van",       nome: "Van para o campeonato",          desc: "Transporte do time inteiro em um dia de competição",      valor: 600, ico: "bus" },
+  { id: "hosped-eq", nome: "Hospedagem da equipe (cota)",    desc: "Uma cota da hospedagem do time em campeonato fora",       valor: 200, ico: "mat" },
+  { id: "inscr-eq",  nome: "Inscrição da equipe (cota)",     desc: "Uma cota da inscrição coletiva em um campeonato",        valor: 150, ico: "medal" },
+  { id: "filia-eq",  nome: "Filiação da equipe",             desc: "Registro do time na federação para a temporada",         valor: 500, ico: "cal" },
+  { id: "faixas",    nome: "Kit de faixas para graduação",   desc: "Faixas novas para toda a turma na próxima graduação",    valor: 400, ico: "belt" },
+  { id: "alim",      nome: "Alimentação no dia da luta",     desc: "Refeições da equipe em um dia inteiro de competição",     valor: 300, ico: "apple" }
 ];
 
 const PLANOS = [
-  { valor: 30,  label: "Cobre a faixa do ano" },
+  { valor: 30,  label: "Cobre a filiação do ano" },
   { valor: 50,  label: "Cobre uma inscrição a cada 2 meses" },
-  { valor: 100, label: "Cobre metade da mensalidade" },
-  { valor: 180, label: "Cobre a mensalidade inteira" }
+  { valor: 100, label: "Cobre uma inscrição por mês" },
+  { valor: 180, label: "Cobre inscrição e viagem de um campeonato por mês" }
 ];
 
 /* =========================================================
@@ -827,8 +825,8 @@ function pageHome(){
     <section class="hero">
       <div class="wrap" style="padding:0">
         <div class="hero-copy">
-          <span class="eyebrow">Battlefield Clube de Tiro · Tatame · Equipe juvenil</span>
-          <h1>Coloque uma criança <span class="g">no tatame.</span></h1>
+          <span class="eyebrow">Battlefield Jiu-Jitsu · Equipe juvenil · Balneário Camboriú</span>
+          <h1>Eles já lutam. Ajude a <span class="g">chegar mais longe.</span></h1>
           <p class="lead">${esc(EQUIPE.chamada)}</p>
           <div class="hero-ctas">
             <a class="btn btn-primary btn-lg" href="#/apoiar">Ajudar a realizar um sonho ${ICONS.arrow}</a>
@@ -854,7 +852,7 @@ function pageHome(){
 
     <section id="projeto" class="projeto">
       <div class="sec-head">
-        <span class="eyebrow">O projeto</span>
+        <span class="eyebrow">A equipe</span>
         <h2>${esc(EQUIPE.proposito.titulo)}</h2>
       </div>
       <div class="projeto-grid">
@@ -866,8 +864,8 @@ function pageHome(){
           <div class="foto-ph" aria-hidden="true"><span class="mat-pill">Foto do treino</span></div>
           <ul class="garantias">
             <li>${ICONS.check} <span><b>100% repassado.</b> Cada real vira o item que você escolheu.</span></li>
-            <li>${ICONS.check} <span><b>Prestação de contas mensal,</b> com foto do que foi comprado.</span></li>
-            <li>${ICONS.check} <span><b>Agradecimento do atleta</b> quando o item chega.</span></li>
+            <li>${ICONS.check} <span><b>Prestação de contas a cada campeonato,</b> com foto e resultado.</span></li>
+            <li>${ICONS.check} <span><b>Agradecimento do atleta</b> quando o item chega e quando ele sobe ao pódio.</span></li>
           </ul>
         </div>
       </div>
@@ -897,7 +895,7 @@ function pageHome(){
           <span class="n">3</span>
           <div class="ring">${ICONS.heart}</div>
           <h3>Pague aqui no totem</h3>
-          <p>Pix ou cartão. O atleta recebe o item e você, o agradecimento.</p>
+          <p>Pix ou cartão. O atleta compete e você recebe o resultado.</p>
           <div class="mini"><span>${ICONS.pix} Pix</span><span>${ICONS.card} Cartão</span></div>
         </li>
       </ol>
@@ -929,15 +927,15 @@ function pageApoiar(){
           <div class="modo-head"><div class="ring">${ICONS.gift}</div><div><span class="eyebrow">Pontual</span><h3>Patrocine um item, uma vez</h3></div></div>
           <p>Você paga o custo de algo concreto e a equipe entrega para o atleta.</p>
           <ul class="ex">
-            <li>${ICONS.gi} Quimono novo <b class="num">${money(350)}</b></li>
             <li>${ICONS.medal} Inscrição em campeonato <b class="num">${money(120)}</b></li>
-            <li>${ICONS.belt} Faixa nova <b class="num">${money(60)}</b></li>
+            <li>${ICONS.bus} Viagem para um campeonato <b class="num">${money(300)}</b></li>
+            <li>${ICONS.gi} Quimono de competição <b class="num">${money(350)}</b></li>
           </ul>
           <span class="btn btn-primary">Quero patrocinar um item ${ICONS.arrow}</span>
         </a>
         <a class="modo reveal" style="--i:1" href="#/quem?modo=mensal">
           <div class="modo-head"><div class="ring">${ICONS.cal}</div><div><span class="eyebrow">Mensal</span><h3>Seja padrinho ou madrinha</h3></div></div>
-          <p>Um valor fixo todo mês, que garante treino e competição o ano inteiro. Cancele quando quiser.</p>
+          <p>Um valor fixo todo mês, que garante inscrições e viagens a temporada inteira. Cancele quando quiser.</p>
           <ul class="ex">
             ${PLANOS.slice(0, 3).map(pl => `<li>${ICONS.cal} ${esc(pl.label)} <b class="num">${money(pl.valor)}/mês</b></li>`).join("")}
           </ul>
@@ -962,13 +960,13 @@ function pageQuem(){
         <a href="#/atletas" class="reveal" style="--i:0">
           <div class="avatar-stack">${ATLETAS.slice(0, 4).map(a => avatar(a, "round", false)).join("")}</div>
           <h3>Um atleta</h3>
-          <p class="muted">Conheça a história de cada criança e escolha uma para ${modo === "mensal" ? "apadrinhar" : "patrocinar"}.</p>
+          <p class="muted">Conheça a história e o sonho de cada atleta e escolha quem ${modo === "mensal" ? "apadrinhar" : "patrocinar"}.</p>
           <span class="arrow">Ver os ${ATLETAS.length} atletas ${ICONS.arrow}</span>
         </a>
         <a href="#/equipe" class="reveal" style="--i:1">
           <div class="ring">${ICONS.mat}</div>
           <h3>A equipe inteira</h3>
-          <p class="muted">Tatame, van, kit de faixas e tudo o que é de todos.</p>
+          <p class="muted">Van, hospedagem, filiações e tudo o que a equipe divide para competir.</p>
           <span class="arrow">Ver as necessidades da equipe ${ICONS.arrow}</span>
         </a>
       </div>
@@ -983,7 +981,7 @@ function pageAtletas(){
       <div class="sec-head">
         <span class="eyebrow">Passo 3 de 3 · Nossos atletas</span>
         <h2>Escolha quem você quer apadrinhar.</h2>
-        <p class="lead">Cada card abre a história completa e a lista do que cada um precisa.</p>
+        <p class="lead">Cada card abre a história, o sonho e a lista do que cada um precisa para competir.</p>
       </div>
       <div class="grid-atletas">
         ${ATLETAS.map((a, i) => `
@@ -1044,7 +1042,7 @@ function pageAtleta(id){
     <section id="patrocinar" style="padding-top:8px" data-alvo-tipo="atleta" data-alvo-id="${a.id}">
       <div class="sec-head">
         <span class="eyebrow">Patrocinar ${esc(a.nome)}</span>
-        <h2>O que ${esc(a.nome)} precisa agora</h2>
+        <h2>O que ${esc(a.nome)} precisa para o próximo campeonato</h2>
       </div>
       ${tabs(alvo, a.nome, ITENS_ATLETA)}
     </section>`;
@@ -1060,14 +1058,14 @@ function pageEquipe(){
         <div>
           <div class="mat" style="aspect-ratio:3/4;border-radius:18px" aria-hidden="true">
             <span class="mat-pill">Foto da equipe</span>
-            <div class="mat-inner"><span class="mat-stat num">${ATLETAS.length}</span><span class="mat-label">atletas no projeto</span></div>
+            <div class="mat-inner"><span class="mat-stat num">${ATLETAS.length}</span><span class="mat-label">atletas na equipe juvenil</span></div>
           </div>
           <div style="height:16px"></div>
           ${metaBox(EQUIPE.metaMes, "Meta da equipe no mês")}
         </div>
         <div class="profile-copy">
           <div>
-            <span class="eyebrow">${esc(EQUIPE.cidade)} · desde ${EQUIPE.desde}</span>
+            <span class="eyebrow">${esc(EQUIPE.cidade)} · ${esc(EQUIPE.professores)}</span>
             <h1 style="font-size:clamp(2.2rem,6vw,3.6rem)">${esc(EQUIPE.academia)}</h1>
           </div>
           <div class="bio">${EQUIPE.descricao.map(p => `<p>${esc(p)}</p>`).join("")}</div>
@@ -1078,7 +1076,7 @@ function pageEquipe(){
     <section id="patrocinar" style="padding-top:8px" data-alvo-tipo="equipe" data-alvo-id="equipe">
       <div class="sec-head">
         <span class="eyebrow">Patrocinar a equipe</span>
-        <h2>O que a equipe precisa agora</h2>
+        <h2>O que a equipe precisa para competir</h2>
       </div>
       ${tabs(alvo, "a equipe", ITENS_EQUIPE)}
     </section>`;
@@ -1158,7 +1156,7 @@ function pageObrigado(){
       <div class="big">${ICONS.check}</div>
       <span class="eyebrow">Apoio confirmado</span>
       <h1 style="font-size:clamp(2rem,6vw,3.4rem)">${u.anon ? "Obrigado, padrinho anônimo!" : `Obrigado, ${esc(u.nome.split(" ")[0])}!`}</h1>
-      <p class="lead" style="text-align:center">Você acabou de mudar o mês de ${esc(quem)}.${u.fone ? " Assim que o item chegar, você recebe a foto no WhatsApp." : ""}</p>
+      <p class="lead" style="text-align:center">Você acabou de deixar ${esc(quem)} mais perto do próximo campeonato.${u.fone ? " Assim que o item chegar, você recebe a foto no WhatsApp." : ""}</p>
       <div class="panel" style="width:100%;text-align:left">
         ${u.cart.map(l => `<div class="line"><div><div class="t">${esc(l.nome)}${l.qtd > 1 ? ` × ${l.qtd}` : ""}</div><div class="s">para ${esc(alvoNome(l.alvo))}</div></div><span class="price num">${money(l.valor * l.qtd)}${l.tipo === "mensal" ? '<span class="muted small">/mês</span>' : ""}</span><span></span></div>`).join("")}
         ${u.msg ? `<div class="note info">Sua mensagem: “${esc(u.msg)}”</div>` : ""}
