@@ -13,7 +13,7 @@ Plataforma de patrocínio dos atletas juvenis do Battlefield Jiu-Jitsu (Balneár
 5. **Sua escolha:** resumo, apoio com nome ou anônimo, WhatsApp e mensagem opcionais, bloco reservado para o pagamento.
 6. **Obrigado:** confirmação e retorno automático ao início.
 
-Um indicador de etapas no topo mostra em que passo a pessoa está. Ainda não há integração de pagamento. O bloco no checkout marca onde ela entra.
+Um indicador de etapas no topo mostra em que passo a pessoa está. O rodapé é fixo no pé da tela em todas as páginas: mostra a marca e, quando há itens escolhidos, o total e o botão "Finalizar". Ainda não há integração de pagamento. O bloco no checkout marca onde ela entra.
 
 ## Modo totem
 
@@ -45,7 +45,7 @@ Transição entre telas, slideshow dos atletas na capa (troca a cada 5 s), faixa
 
 ## Atletas e fotos
 
-Os nove atletas em `ATLETAS` (no início do script) foram sintetizados dos portfólios da pasta "0. Projeto social - Jiu jitsu" do Drive. As fotos ficam em `fotos/<atleta>/01.jpg` a `05.jpg` (no máximo 5 por atleta), já reduzidas para 1400 px. O campo `fotos` diz quantas existem e `capa` qual delas é a principal.
+Os nove atletas em `ATLETAS` (no início do script) foram sintetizados dos portfólios da pasta "0. Projeto social - Jiu jitsu" do Drive. As fotos ficam em `fotos/<atleta>/01.jpg` a `05.jpg` (no máximo 5 por atleta), já reduzidas para 1400 px. Elas aparecem inteiras, sem corte, sobre um fundo desfocado da própria foto. O campo `fotos` diz quantas existem e `capa` qual delas é a principal.
 
 Para trocar ou acrescentar fotos: coloque o JPEG em `fotos/<atleta>/NN.jpg` e ajuste `fotos`/`capa`. Os utilitários em `scripts/` decodificam arquivos vindos do Drive (`salvar_foto.py`) e extraem fotos de portfólios em PDF (`extrair_pdf.py`).
 

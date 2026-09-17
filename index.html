@@ -236,14 +236,14 @@
   /* Fotos reais com reserva enquanto o arquivo não existe */
   .foto{position:relative;overflow:hidden;background:linear-gradient(160deg,#1f2c1a,#0a0d09 70%);border-radius:8px;display:grid;place-items:center}
   .foto::before{content:"";position:absolute;inset:0;background:var(--hex) center/56px 64px;opacity:.6}
-  .foto img{position:relative;width:100%;height:100%;object-fit:cover;object-position:center 22%;display:block;z-index:1}
+  .foto img{position:relative;width:100%;height:100%;object-fit:contain;display:block;z-index:1}
+  .foto img.fundo{position:absolute;inset:-12%;width:124%;height:124%;object-fit:cover;filter:blur(22px) brightness(.45) saturate(1.2);z-index:0}
   .foto>span{display:none;position:relative;font-family:"Saira Extra Condensed",sans-serif;font-weight:800;font-size:4rem;color:#fff}
   .foto>i{display:none;position:absolute;left:10px;top:10px;font:700 .62rem/1 "Source Sans 3",sans-serif;letter-spacing:.2em;text-transform:uppercase;color:var(--neon);background:rgba(0,0,0,.6);padding:4px 6px;border-radius:3px;border:1px solid var(--accent-line)}
   .foto.sem-foto img{display:none}
   .foto.sem-foto>span,.foto.sem-foto>i{display:block}
-  .foto.capa{width:100%;aspect-ratio:4/3;border-radius:0}
+  .foto.capa{width:100%;aspect-ratio:3/4;border-radius:0}
   .foto.principal{width:100%;aspect-ratio:3/4;border:1px solid var(--line);box-shadow:var(--shadow)}
-  @media (max-width:760px){ .foto.principal{aspect-ratio:4/3} }
 
   .perfil{display:grid;grid-template-columns:1.05fr .95fr;gap:32px;align-items:start}
   @media (max-width:760px){ .perfil{grid-template-columns:1fr} .perfil-foto{order:-1} }
@@ -334,13 +334,22 @@
   .note::before{content:"";width:0;height:0;border-left:8px solid transparent;border-right:8px solid transparent;border-bottom:14px solid #0C0C0C;margin-top:3px;flex-shrink:0}
   .note.ok,.note.info{background:var(--lime)}
 
-  /* Sticky cart bar */
-  .cartbar{position:fixed;left:0;right:0;bottom:0;z-index:25;padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px));background:rgba(4,4,4,.94);backdrop-filter:blur(10px);border-top:2px solid var(--neon);transform:translateY(110%);transition:transform .2s ease}
-  .cartbar.show{transform:none}
-  .cartbar .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px}
-  .cartbar .sum{display:flex;flex-direction:column;line-height:1.2}
-  .cartbar .sum b{font-family:"Saira Extra Condensed",sans-serif;font-size:1.6rem;color:var(--neon)}
-  body.has-cartbar{padding-bottom:88px}
+  /* Rodapé fixo: sempre no pé da tela, em todas as páginas */
+  body{padding-bottom:calc(84px + env(safe-area-inset-bottom,0px))}
+  .barra{position:fixed;left:0;right:0;bottom:0;z-index:25;min-height:72px;padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px));background:rgba(4,4,4,.96);backdrop-filter:blur(10px);border-top:2px solid var(--line-strong);transition:border-color .3s}
+  .barra[data-state="itens"]{border-top-color:var(--neon)}
+  .barra .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px}
+  .barra-marca{display:flex;align-items:center;gap:10px;min-width:0}
+  .barra-marca .mark{width:30px;height:34px;flex-shrink:0;display:grid}
+  .barra-marca .mark svg{width:100%;height:100%}
+  .barra-texto{font-family:"Saira Extra Condensed",sans-serif;font-weight:800;text-transform:uppercase;letter-spacing:.06em;font-size:1.05rem;line-height:1;white-space:nowrap}
+  .barra-texto small{display:block;font-family:"Source Sans 3",sans-serif;text-transform:none;font-weight:400;letter-spacing:0;color:var(--muted);font-size:.8rem;margin-top:3px}
+  .barra .sum{display:flex;flex-direction:column;line-height:1.2;margin-left:auto;text-align:right;min-width:0}
+  .barra .sum b{font-family:"Saira Extra Condensed",sans-serif;font-size:1.6rem;color:var(--neon);white-space:nowrap}
+  .barra[data-state="vazio"] .sum b{display:none}
+  .barra[data-state="vazio"] #cartbar-btn,.barra[data-state="checkout"] #cartbar-btn{display:none}
+  .barra[data-state="checkout"] .sum{opacity:.7}
+  @media (max-width:560px){ .barra-texto small{display:none} .barra[data-state="itens"] .barra-marca{display:none} }
 
   /* Checkout */
   .checkout{display:grid;grid-template-columns:1.1fr .9fr;gap:24px;align-items:start}
@@ -379,9 +388,8 @@
   .trans b{display:block;margin-bottom:4px;font-family:"Saira Extra Condensed",sans-serif;text-transform:uppercase;letter-spacing:.08em;font-size:1.25rem}
   .trans p{color:var(--ink-2);font-size:.95rem}
 
-  footer{border-top:1px solid var(--line);padding-block:28px;color:var(--muted);font-size:.9rem;background:var(--bg-deep)}
-  footer .wrap{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
-  .toast{position:fixed;left:50%;bottom:calc(100px + env(safe-area-inset-bottom,0px));transform:translateX(-50%) translateY(20px);opacity:0;background:var(--lime);color:#0C0C0C;padding:12px 18px;border-radius:4px;font-weight:700;pointer-events:none;transition:all .2s;z-index:30;max-width:calc(100% - 32px);text-align:center}
+
+  .toast{position:fixed;left:50%;bottom:calc(96px + env(safe-area-inset-bottom,0px));transform:translateX(-50%) translateY(20px);opacity:0;background:var(--lime);color:#0C0C0C;padding:12px 18px;border-radius:4px;font-weight:700;pointer-events:none;transition:all .2s;z-index:30;max-width:calc(100% - 32px);text-align:center}
   .toast.show{opacity:1;transform:translateX(-50%)}
   .idle[hidden]{display:none}
   .idle{position:fixed;inset:0;z-index:40;background:rgba(4,4,4,.8);display:grid;place-items:center;padding:16px}
@@ -406,11 +414,11 @@
   @media (max-width:720px){ .flow::before,.flow::after{animation:none} }
   .cartbtn.bump .count{animation:bump .45s ease-out}
   .foto img{transition:transform .7s ease}
-  @media (hover:hover){ .card-atleta:hover .foto img{transform:scale(1.06)} .modo:hover .ring,.choose a:hover .ring{transform:scale(1.08)} }
+  @media (hover:hover){ .card-atleta:hover .foto img:not(.fundo){transform:scale(1.04)} .modo:hover .ring,.choose a:hover .ring{transform:scale(1.08)} }
   .card-atleta:active{transform:scale(.985)}
   .ring{transition:transform .25s ease}
   .galeria-palco img.on{animation:kenburns 8s ease-out both}
-  .foto.principal img{animation:kenburns 14s ease-out both}
+  .foto.principal img:not(.fundo){animation:kenburns 14s ease-out both}
   .stat b{transition:color .2s}
   .stat.contando b{color:var(--lime)}
 
@@ -420,7 +428,8 @@
   .mat.slideshow::after{display:none}
   .mat.slideshow .slide{position:absolute;inset:0;opacity:0;transition:opacity 1.2s ease;z-index:0}
   .mat.slideshow .slide.on{opacity:1;z-index:1}
-  .mat.slideshow .slide img{width:100%;height:100%;object-fit:cover;object-position:center 22%;display:block;animation:kenburns 7s ease-out both}
+  .mat.slideshow .slide img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;display:block;animation:kenburns 7s ease-out both}
+  .mat.slideshow .slide img.fundo{inset:-12%;width:124%;height:124%;object-fit:cover;filter:blur(22px) brightness(.45) saturate(1.2);animation:none}
   .mat.slideshow .mat-inner{z-index:3}
   .mat.slideshow .mat-nome{font-family:"Saira Extra Condensed",sans-serif;font-size:2.2rem;font-weight:800;text-transform:uppercase;line-height:1}
   .mat.slideshow .mat-nome small{display:block;font-family:"Source Sans 3",sans-serif;text-transform:none;font-weight:600;font-size:1rem;color:var(--lime);letter-spacing:0;margin-top:4px}
@@ -467,19 +476,16 @@
 
 <main id="app" class="wrap"></main>
 
-<footer>
+<footer class="barra" id="cartbar" data-state="vazio" aria-live="polite">
   <div class="wrap">
-    <span id="footer-team">Battlefield Jiu-Jitsu · Balneário Camboriú, SC</span>
-    <span>Pagamento será integrado na próxima etapa · toque em qualquer lugar para continuar</span>
+    <div class="barra-marca">
+      <span class="mark" aria-hidden="true"><svg viewBox="0 0 56 64"><path d="M28 3 52 16.5v31L28 61 4 47.5v-31z" fill="#383838" stroke="#33EB01" stroke-width="5" stroke-linejoin="round"/><path d="M17 33h22M22 27l6 6-6 6M34 27l-6 6 6 6" fill="none" stroke="#FCFCFC" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      <span class="barra-texto">Battlefield Jiu-Jitsu<small>Balneário Camboriú, SC</small></span>
+    </div>
+    <div class="sum"><span class="small muted" id="cartbar-label">Nenhum item escolhido</span><b class="num" id="cartbar-total"></b></div>
+    <a class="btn btn-primary" id="cartbar-btn" href="#/checkout">Finalizar</a>
   </div>
 </footer>
-
-<div class="cartbar" id="cartbar" aria-live="polite">
-  <div class="wrap">
-    <div class="sum"><span class="small muted" id="cartbar-label">Sua escolha</span><b class="num" id="cartbar-total">R$ 0</b></div>
-    <a class="btn btn-primary" href="#/checkout">Finalizar</a>
-  </div>
-</div>
 <div class="toast" id="toast" role="status"></div>
 <div class="idle" id="idle" hidden role="dialog" aria-labelledby="idle-title">
   <div class="idle-box">
@@ -688,14 +694,12 @@ function syncCart(){
   btn.classList.toggle("empty", t.n === 0);
   const bar = document.getElementById("cartbar");
   const onCheckout = location.hash.startsWith("#/checkout") || location.hash.startsWith("#/obrigado");
-  const show = t.n > 0 && !onCheckout;
-  bar.classList.toggle("show", show);
-  document.body.classList.toggle("has-cartbar", show);
+  bar.dataset.state = t.n === 0 ? "vazio" : onCheckout ? "checkout" : "itens";
   const parts = [];
   if (t.hoje) parts.push(`${money(t.hoje)} hoje`);
   if (t.mes) parts.push(`${money(t.mes)}/mês`);
-  document.getElementById("cartbar-total").textContent = parts.join(" + ") || money(0);
-  document.getElementById("cartbar-label").textContent = `${t.n} ${t.n === 1 ? "item escolhido" : "itens escolhidos"}`;
+  document.getElementById("cartbar-total").textContent = parts.join(" + ");
+  document.getElementById("cartbar-label").textContent = t.n === 0 ? "Nenhum item escolhido ainda" : `${t.n} ${t.n === 1 ? "item escolhido" : "itens escolhidos"}`;
 }
 let toastT;
 function toast(msg){
@@ -731,7 +735,7 @@ const ICONS = {
 const fotoPath = (a, i) => `fotos/${a.id}/${String(i).padStart(2, "0")}.jpg`;
 function foto(a, i, cls = ""){
   if (!a.fotos || i > a.fotos) return `<div class="foto ${cls} sem-foto"><span>${esc(a.nome[0])}</span><i>foto em breve</i></div>`;
-  return `<div class="foto ${cls}"><img src="${fotoPath(a, i)}" alt="${esc(a.nomeCompleto)}" loading="lazy" onerror="this.parentElement.classList.add('sem-foto')"><span>${esc(a.nome[0])}</span><i>foto em breve</i></div>`;
+  return `<div class="foto ${cls}"><img class="fundo" src="${fotoPath(a, i)}" alt="" aria-hidden="true" loading="lazy"><img src="${fotoPath(a, i)}" alt="${esc(a.nomeCompleto)}" loading="lazy" onerror="this.parentElement.classList.add('sem-foto')"><span>${esc(a.nome[0])}</span><i>foto em breve</i></div>`;
 }
 function avatar(a, cls = "", showPh = true){
   return `<div class="avatar ${cls}" style="--belt:var(--belt-${a.faixaCor});background:linear-gradient(160deg,#2a3a22,#101510 70%)" aria-label="Foto de ${esc(a.nome)} (espaço reservado)">
@@ -835,7 +839,7 @@ function pageHome(){
         </div>
         <div class="mat slideshow" id="slideshow" aria-hidden="true">
           <span class="mat-pill">Nossos atletas</span>
-          ${ATLETAS.filter(a => a.fotos).map((a, i) => `<div class="slide ${i === 0 ? "on" : ""}" data-nome="${esc(a.nome)}" data-frase="${esc(a.frase)}"><img src="${fotoPath(a, a.capa || 1)}" alt=""></div>`).join("")}
+          ${ATLETAS.filter(a => a.fotos).map((a, i) => `<div class="slide ${i === 0 ? "on" : ""}" data-nome="${esc(a.nome)}" data-frase="${esc(a.frase)}"><img class="fundo" src="${fotoPath(a, a.capa || 1)}" alt="" aria-hidden="true"><img src="${fotoPath(a, a.capa || 1)}" alt=""></div>`).join("")}
           <div class="mat-inner">
             <span class="mat-nome" id="slide-nome">${esc(ATLETAS[0].nome)}<small id="slide-frase">${esc(ATLETAS[0].frase)}</small></span>
             <div class="mat-barra"><i id="slide-barra"></i></div>
@@ -1351,7 +1355,7 @@ function armSlideshow(){
   const barra = document.getElementById("slide-barra");
   const go = () => {
     slides[i].classList.remove("on"); i = (i + 1) % slides.length; slides[i].classList.add("on");
-    const im = slides[i].querySelector("img"); im.style.animation = "none"; void im.offsetWidth; im.style.animation = "";
+    const im = slides[i].querySelector("img:not(.fundo)"); im.style.animation = "none"; void im.offsetWidth; im.style.animation = "";
     document.getElementById("slide-nome").childNodes[0].textContent = slides[i].dataset.nome;
     document.getElementById("slide-frase").textContent = slides[i].dataset.frase;
     barra.classList.remove("run"); void barra.offsetWidth; barra.classList.add("run");
