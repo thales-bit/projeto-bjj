@@ -29,7 +29,19 @@ Os tempos ficam nas constantes `INATIVIDADE_AVISO_S`, `INATIVIDADE_LIMITE_S` e `
 
 ## Identidade visual
 
-Segue o briefing do Battlefield Clube de Tiro: sempre em modo escuro, verde neon `#33EB01` e verde-limão `#B3F243` sobre preto `#0C0C0C`, títulos em Saira Extra Condensed em caixa alta, texto em Source Sans 3, hexágonos como elemento gráfico e ícones em círculo preto com anel verde. O hexágono da marca no topo e na capa é um desenho vetorial provisório até o PNG do logo em alta ser embutido.
+Replica as artes do Battlefield no Instagram (referência: post "Nova grade de horário"):
+
+- Sempre escuro, com fotos de luta em preto e branco no fundo e brilho verde nas bordas.
+- Títulos em Saira Condensed 900, em duas linhas: a primeira branca com textura gasta, a segunda em verde neon com brilho.
+- Subtítulos espaçados entre linhas verdes, molduras e painéis com cantos chanfrados em 45°.
+- Caixa verde com texto preto para a ação principal, como o "07:00 ÀS 08:00" da arte.
+- Pincelada verde com letra de pincel (Permanent Marker) para os destaques, como o "VAGAS ABERTAS".
+- Faixas de neon diagonais nos cantos de baixo.
+- Verdes medidos na arte: `#66F61E` nos títulos e `#7EF63C` nas caixas e no pincel.
+
+O logo em `img/logo-battlefield.png` foi recortado da própria arte (resolução limitada). Quando houver o arquivo original em alta, basta substituir esse PNG.
+
+As versões em preto e branco das fotos (`img/fundo/` para a capa e os blocos da equipe, `img/faixa/` para a faixa que rola) são geradas a partir de `fotos/` por `python3 scripts/gerar_fundos.py`. Rode de novo sempre que trocar fotos.
 
 ## Como ver
 
