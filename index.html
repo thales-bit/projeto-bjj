@@ -2,8 +2,9 @@
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" id="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0C0C0C">
+<link rel="manifest" href="manifest.webmanifest">
 <style>
   /* Base mínima (o visualizador do Claude injeta o equivalente; na Vercel precisa estar aqui) */
   :root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -438,6 +439,65 @@
   .thanks .duo{font-size:clamp(2.8rem,9vw,5.6rem)}
   .thanks .hud-sub{width:min(100%,520px)}
   .thanks .panel{width:100%;text-align:left}
+
+  /* ---------- Pagamento na maquininha (autoatendimento) ---------- */
+  .pagar{max-width:860px;margin:0 auto;display:flex;flex-direction:column;align-items:center;gap:22px;text-align:center;padding-top:8px}
+  .pagar .duo{font-size:clamp(2.6rem,8vw,5.2rem)}
+  .pagar .hud-sub{width:min(100%,520px)}
+  .pay-total{width:min(100%,520px);display:flex;flex-direction:column;align-items:center;gap:8px;padding:22px 18px}
+  .pay-total .v{font:900 clamp(2.8rem,9vw,4.6rem)/1 var(--display);color:#fff}
+  .pay-total small{color:var(--muted);font-size:.95rem}
+  .pay-opcoes{width:100%;display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  .pay-opcoes button{--c:16px;--line-c:var(--line-2);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;min-height:190px;padding:20px 12px;border:0;background:none;color:var(--ink);cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .12s ease}
+  .pay-opcoes button:active{transform:scale(.97);--line-c:var(--neon)}
+  .pay-opcoes button svg{width:52px;height:52px;color:var(--neon)}
+  .pay-opcoes button span{display:flex;flex-direction:column;align-items:inherit;gap:6px}
+  .pay-opcoes button b{font:900 clamp(1.7rem,4.4vw,2.4rem)/1 var(--display);text-transform:uppercase}
+  .pay-opcoes button small{color:var(--muted);font-size:.92rem}
+  @media (max-width:560px){.pay-opcoes{grid-template-columns:1fr}.pay-opcoes button{min-height:100px;flex-direction:row;justify-content:flex-start;padding-inline:22px;text-align:left}.pay-opcoes button span{align-items:flex-start}}
+  .maquininha{position:relative;width:170px;height:170px;display:grid;place-items:center;margin-top:6px}
+  .maquininha svg{width:104px;height:104px;color:#fff;position:relative;z-index:1}
+  .maquininha::before,.maquininha::after{content:"";position:absolute;inset:0;border-radius:50%;border:2px solid var(--neon);box-shadow:0 0 18px rgba(102,246,30,.35);animation:pulso 2.2s ease-out infinite}
+  .maquininha::after{animation-delay:1.1s}
+  @keyframes pulso{from{transform:scale(.62);opacity:.95}to{transform:scale(1.22);opacity:0}}
+  .pay-dica{font-size:clamp(1.15rem,2.8vw,1.5rem);color:var(--ink-2);max-width:600px;margin:0}
+  .pay-dica b{color:#fff}
+  .pay-teste{width:min(100%,560px);display:flex;flex-direction:column;align-items:center;gap:12px;padding:16px;border:1.5px dashed rgba(102,246,30,.45);background:repeating-linear-gradient(-45deg,rgba(102,246,30,.04) 0 10px,transparent 10px 20px);color:var(--ink-2);font-size:.95rem}
+  .pay-teste>b{font:800 .78rem/1 var(--wide);letter-spacing:.22em;text-transform:uppercase;color:var(--neon)}
+  .pagar .acoes{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
+  .pagar .big{width:112px;height:129px;display:grid;place-items:center;background:var(--verde);color:var(--on-neon);clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%);animation:pop .7s cubic-bezier(.2,1.5,.4,1) both}
+  .pagar .big svg{width:54px;height:54px}
+  .pagar .erro{filter:drop-shadow(0 0 24px rgba(255,90,70,.45))}
+  .pagar .erro .big{background:linear-gradient(180deg,#FF8A78,#E5483A);color:#fff}
+  /* Na tela de pagamento não há menu nem barra: o único caminho é pagar ou desistir */
+  body[data-tela="pagamento"]{padding-bottom:0}
+  body[data-tela="pagamento"] .topbar .nav,body[data-tela="pagamento"] .barra{display:none}
+  body[data-tela="pagamento"] .brand{pointer-events:none}
+  .pagar{min-height:calc(100svh - 210px);justify-content:center;padding-bottom:40px}
+  /* Painel vertical do totem: tudo maior e centralizado na tela */
+  @media (orientation:portrait) and (min-height:1400px){
+    .pagar{gap:34px}
+    .pagar .duo{font-size:clamp(4.6rem,9vw,6.6rem)}
+    .pay-total{width:min(100%,640px);padding:30px 22px}
+    .pay-total .v{font-size:6rem}
+    .pay-total small{font-size:1.15rem}
+    .pay-opcoes button{min-height:300px;gap:18px}
+    .pay-opcoes button svg{width:76px;height:76px}
+    .pay-opcoes button b{font-size:3rem}
+    .pay-opcoes button small{font-size:1.1rem}
+    .maquininha{width:260px;height:260px}
+    .maquininha svg{width:160px;height:160px}
+    .pay-dica{font-size:1.8rem;max-width:760px}
+    .pagar .big{width:160px;height:184px}
+    .pagar .big svg{width:76px;height:76px}
+    .pagar .btn-xl,.pagar .btn-lg{min-height:84px;font-size:1.4rem;padding-inline:40px}
+  }
+
+  /* ---------- Modo totem: sem seleção de texto, menu de toque longo, arrastar ou zoom ---------- */
+  html.totem,html.totem body{overscroll-behavior:none;touch-action:pan-x pan-y}
+  html.totem body{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+  html.totem input,html.totem textarea{-webkit-user-select:text;user-select:text}
+  html.totem img,html.totem a{-webkit-user-drag:none}
   .pg .empty{display:flex;flex-direction:column;align-items:center;gap:18px;text-align:center;padding:56px 0 20px}
   .pg .empty .duo{font-size:clamp(2.3rem,7vw,4rem)}
   .pg .empty .ring{width:76px;height:76px}
@@ -737,7 +797,7 @@ function syncCart(){
   document.getElementById("cart-count").textContent = t.n;
   btn.classList.toggle("empty", t.n === 0);
   const bar = document.getElementById("cartbar");
-  const onCheckout = location.hash.startsWith("#/checkout") || location.hash.startsWith("#/obrigado");
+  const onCheckout = ["#/checkout", "#/pagamento", "#/obrigado"].some(h => location.hash.startsWith(h));
   bar.dataset.state = t.n === 0 ? "vazio" : onCheckout ? "checkout" : "itens";
   const parts = [];
   if (t.hoje) parts.push(`${money(t.hoje)} hoje`);
@@ -1151,6 +1211,7 @@ function pageCheckout(){
   const groups = {};
   cart.forEach((l, i) => { const k = l.alvo.tipo + "|" + l.alvo.id; (groups[k] = groups[k] || { alvo: l.alvo, lines: [] }).lines.push({ ...l, i }); });
   const t = totals();
+  const rz = ui.rascunho || {};  // o que a pessoa já tinha digitado, se voltou do pagamento
   return `
     ${stepper(4)}
     <section class="pg">
@@ -1189,22 +1250,150 @@ function pageCheckout(){
             <button class="hud c4" type="button" data-quem="anon" aria-pressed="${ui.quem === "anon"}"><b>${ICONS.heart} Anônimo</b><small>Só a equipe vê quem apoiou</small></button>
           </div>
           <div id="campos-nome" ${ui.quem === "anon" ? "hidden" : ""}>
-          <div class="field"><label for="f-nome">Seu primeiro nome</label><input class="input" id="f-nome" name="nome" placeholder="Para o atleta saber quem agradecer" autocomplete="off"></div>
+          <div class="field"><label for="f-nome">Seu primeiro nome</label><input class="input" id="f-nome" name="nome" placeholder="Para o atleta saber quem agradecer" autocomplete="off" value="${esc(rz.nome || "")}"></div>
           </div>
-          <div class="field"><label for="f-fone">WhatsApp <span class="muted">(opcional, para receber a foto do item e o recibo)</span></label><input class="input" id="f-fone" name="fone" type="tel" placeholder="(11) 99999-9999" autocomplete="off" inputmode="tel"></div>
-          <div class="field"><label for="f-msg">Mensagem para o atleta <span class="muted">(opcional)</span></label><textarea class="input" id="f-msg" name="msg" placeholder="Um incentivo curto que vai ser lido no tatame"></textarea></div>
-          <label class="check" id="campo-publico" ${ui.quem === "anon" ? "hidden" : ""}><input type="checkbox" id="f-publico" name="publico" checked> Pode mostrar meu primeiro nome na lista de padrinhos e madrinhas</label>
+          <div class="field"><label for="f-fone">WhatsApp <span class="muted">(opcional, para receber a foto do item e o recibo)</span></label><input class="input" id="f-fone" name="fone" type="tel" placeholder="(11) 99999-9999" autocomplete="off" inputmode="tel" value="${esc(rz.fone || "")}"></div>
+          <div class="field"><label for="f-msg">Mensagem para o atleta <span class="muted">(opcional)</span></label><textarea class="input" id="f-msg" name="msg" placeholder="Um incentivo curto que vai ser lido no tatame">${esc(rz.msg || "")}</textarea></div>
+          <label class="check" id="campo-publico" ${ui.quem === "anon" ? "hidden" : ""}><input type="checkbox" id="f-publico" name="publico" ${rz.publico === false && !rz.anon ? "" : "checked"}> Pode mostrar meu primeiro nome na lista de padrinhos e madrinhas</label>
           <div class="note" id="nota-anon" ${ui.quem === "anon" ? "" : "hidden"}>O atleta receberá o item como presente de um padrinho ou madrinha anônimo. Seu contato fica só com a equipe.</div>
           <div class="pay-placeholder">
-            <b>Pagamento</b>
-            <span class="small">Este bloco será substituído pelo meio de pagamento na próxima etapa.</span>
-            <div class="methods"><span class="chip">${ICONS.pix} Pix com QR code na tela</span><span class="chip">${ICONS.card} Cartão na maquininha</span></div>
+            <b>Pagamento na maquininha</b>
+            <span class="small">Na próxima tela você escolhe a forma e paga na maquininha ao lado do totem.</span>
+            <div class="methods"><span class="chip">${ICONS.card} Crédito</span><span class="chip">${ICONS.card} Débito</span><span class="chip">${ICONS.pix} Pix</span></div>
           </div>
           <button class="btn btn-primary btn-xl" type="submit">Ir para o pagamento ${ICONS.arrow}</button>
           <p class="muted small">Ao confirmar você concorda que o valor será repassado ao projeto para a finalidade escolhida.</p>
         </form>
       </div>
     </section>`;
+}
+
+/* =========================================================
+   PAGAMENTO NA MAQUININHA
+   Como nos totens de lanchonete: escolhe a forma, paga na
+   maquininha e a tela vai sozinha para o "Obrigado" e depois
+   para o início.
+   Enquanto a maquininha da Elgin não está ligada, roda em modo
+   de teste. Para ligar: PAGAMENTO.modo = "tefweb" (app Elgin TEF
+   HUB no próprio totem) ou, se a Elgin fornecer Smart POS, uma
+   função no Vercel com a API POS Comandas.
+   ========================================================= */
+const PAGAMENTO = {
+  modo: "teste",                              // "teste" | "tefweb"
+  tefWebUrl: "http://localhost:2001/tef/v1",  // servidor local do app Elgin TEF HUB
+  aprovaTesteS: 8,                            // modo de teste: aprova sozinho depois disso
+};
+const FORMAS = [
+  { id: "credito", nome: "Crédito", dica: "Cartão na maquininha", icone: ICONS.card },
+  { id: "debito",  nome: "Débito",  dica: "Cartão na maquininha", icone: ICONS.card },
+  { id: "pix",     nome: "Pix",     dica: "QR code no app do banco", icone: ICONS.pix },
+];
+const ICON_MAQUININHA = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="2" width="14" height="20" rx="2.5"/><rect x="8" y="4.8" width="8" height="5.2" rx="1"/><path d="M8.6 13.3h.01M12 13.3h.01M15.4 13.3h.01M8.6 16.3h.01M12 16.3h.01M15.4 16.3h.01M8.6 19.2h6.8"/></svg>';
+let pagamento = null;    // pedido esperando pagamento
+let testeDecide = null;  // modo de teste: botões "simular"
+
+function cobrar(p, sinal){
+  if (PAGAMENTO.modo === "tefweb") return cobrarTefWeb(p);
+  return new Promise(resolve => {
+    const t = setTimeout(() => decide({ ok: true }), PAGAMENTO.aprovaTesteS * 1000);
+    const decide = r => { clearTimeout(t); testeDecide = null; resolve(r); };
+    testeDecide = decide;
+    sinal.addEventListener("abort", () => decide({ ok: false, mensagem: "Pagamento cancelado. Nada foi cobrado." }));
+  });
+}
+
+/* Elgin TEF Web: o app da Elgin no totem atende em localhost e conduz a
+   maquininha. A Elgin só devolve NSU e data quando a transação passa.
+   A validar na homologação com a Elgin. */
+async function cobrarTefWeb(p){
+  const valor = p.valor.toFixed(2);
+  const rota = p.forma === "pix" ? "/pix" : `/venda/${p.forma}`;
+  const corpo = p.forma === "credito" ? { valor, parcelas: "1", financiamento: "1" } : { valor };
+  try {
+    const resp = await fetch(PAGAMENTO.tefWebUrl + rota, { method: "POST", headers: { Accept: "application/json", "Content-Type": "application/json" }, body: JSON.stringify(corpo) });
+    const d = await resp.json();
+    const r = typeof d.resultado === "string" ? (d.resultado.includes("{") ? JSON.parse(d.resultado) : {}) : (d.resultado || {});
+    if (r.nsu || r.data) return { ok: true, nsu: r.nsu || null, autorizacao: r.autorizacao || null };
+    return { ok: false, mensagem: r.mensagem || d.mensagem || "Pagamento não aprovado." };
+  } catch (e) {
+    return { ok: false, mensagem: "A maquininha não respondeu. Chame alguém da equipe." };
+  }
+}
+
+async function iniciarPagamento(forma){
+  const p = pagamento;
+  if (!p || p.estado !== "escolher") return;
+  p.forma = forma; p.estado = "aguardando"; p.mensagem = "";
+  p.ctrl = new AbortController();
+  clearTimeout(idleT); clearInterval(idleCount);  // quem está pagando não leva o aviso de inatividade
+  render();
+  const r = await cobrar(p, p.ctrl.signal);
+  if (pagamento !== p) return;
+  if (r.ok){
+    p.estado = "aprovado"; render();
+    setTimeout(() => concluirPagamento(p, r), 1800);
+  } else {
+    p.estado = "recusado"; p.mensagem = r.mensagem; render(); armIdle();
+  }
+}
+
+function concluirPagamento(p, r){
+  if (pagamento !== p) return;
+  ultimoApoio = { ...p.pedido, forma: p.forma, nsu: r.nsu || null };
+  pagamento = null; ui.quem = null; ui.rascunho = null;
+  cart = []; saveCart(); syncCart();
+  location.replace("#/obrigado");  // "voltar" não leva de novo ao pagamento
+}
+
+function pagePagamento(){
+  const p = pagamento;
+  const forma = FORMAS.find(f => f.id === p.forma);
+  const total = `<div class="pay-total hud c4"><span class="eyebrow">${p.estado === "escolher" ? "Total" : "Valor"}</span><span class="v num">${money(p.valor)}</span><small>${p.mes ? `Inclui a 1ª mensalidade de ${money(p.mes)}` : "Pagamento único"}</small></div>`;
+
+  if (p.estado === "escolher") return `
+    ${stepper(4)}
+    <section class="pg"><div class="pagar">
+      ${sub("Pagamento")}
+      ${duo("Como você", "quer pagar?", "h1")}
+      ${total}
+      <div class="pay-opcoes" role="group" aria-label="Forma de pagamento">
+        ${FORMAS.map(f => `<button class="hud c4" type="button" data-pagar="${f.id}">${f.icone}<span><b>${f.nome}</b><small>${f.dica}</small></span></button>`).join("")}
+      </div>
+      <button class="btn btn-ghost" type="button" data-pag="voltar">${ICONS.back} Voltar e revisar</button>
+    </div></section>`;
+
+  if (p.estado === "aguardando") return `
+    <section class="pg"><div class="pagar">
+      <div class="maquininha" aria-hidden="true">${ICON_MAQUININHA}</div>
+      ${sub(forma.nome)}
+      ${duo("Siga na", "maquininha.", "h1")}
+      <p class="pay-dica">${p.forma === "pix" ? "Abra o app do seu banco e leia o <b>QR code</b> que aparece na maquininha." : "<b>Insira, aproxime ou passe</b> o cartão e siga as instruções da maquininha."}</p>
+      ${total}
+      ${PAGAMENTO.modo === "teste"
+        ? `<button class="btn btn-secondary btn-lg" type="button" data-pag="cancelar">${ICONS.x} Cancelar pagamento</button>
+           <div class="pay-teste"><b>Modo de teste</b><span>A maquininha ainda não está ligada. O pagamento é aprovado sozinho em ${PAGAMENTO.aprovaTesteS} segundos.</span><div class="acoes"><button class="btn btn-secondary btn-sm" type="button" data-teste="ok">Simular aprovado</button><button class="btn btn-secondary btn-sm" type="button" data-teste="recusa">Simular recusado</button></div></div>`
+        : `<p class="muted">Para desistir, aperte o botão vermelho da maquininha.</p>`}
+    </div></section>`;
+
+  if (p.estado === "aprovado") return `
+    <section class="pg"><div class="pagar">
+      <div class="big-wrap"><div class="big">${ICONS.check}</div></div>
+      ${sub("Pagamento aprovado")}
+      ${duo("Tudo", "certo!", "h1")}
+      <p class="pay-dica">${p.forma === "pix" ? "Pix recebido." : "Pode retirar o cartão."}</p>
+    </div></section>`;
+
+  return `
+    <section class="pg"><div class="pagar">
+      <div class="big-wrap erro"><div class="big">${ICONS.x}</div></div>
+      ${sub("Pagamento não concluído")}
+      ${duo("Não deu", "certo.", "h1")}
+      <p class="pay-dica">${esc(p.mensagem || "O pagamento foi recusado ou cancelado.")}</p>
+      <div class="acoes">
+        <button class="btn btn-primary btn-xl" type="button" data-pag="tentar">Tentar de novo</button>
+        <button class="btn btn-secondary btn-lg" type="button" data-pag="desistir">Cancelar e voltar ao início</button>
+      </div>
+    </div></section>`;
 }
 
 function pageObrigado(){
@@ -1243,14 +1432,18 @@ function route(){
   if (path === "atleta" && arg) return { page: "atleta", id: arg };
   if (path === "equipe") return { page: "equipe" };
   if (path === "checkout") return { page: "checkout" };
+  if (path === "pagamento") return { page: "pagamento" };
   if (path === "obrigado") return { page: "obrigado" };
   return { page: "home", anchor: path.startsWith("#") ? path.slice(1) : null };
 }
 
 function render(){
   const r = route();
+  if (r.page === "pagamento" && !pagamento) { location.replace("#/checkout"); return; }
+  document.body.dataset.tela = r.page;
   const app = document.getElementById("app");
-  app.innerHTML = r.page === "apoiar" ? pageApoiar()
+  app.innerHTML = r.page === "pagamento" ? pagePagamento()
+    : r.page === "apoiar" ? pageApoiar()
     : r.page === "quem" ? pageQuem()
     : r.page === "atletas" ? pageAtletas()
     : r.page === "atleta" ? pageAtleta(r.id)
@@ -1328,6 +1521,19 @@ document.getElementById("app").addEventListener("click", e => {
   }
   if (b.dataset.qty !== undefined){ changeQty(Number(b.dataset.qty), Number(b.dataset.d)); return; }
   if (b.dataset.rm !== undefined){ removeLine(Number(b.dataset.rm)); return; }
+  if (b.dataset.pagar){ iniciarPagamento(b.dataset.pagar); return; }
+  if (b.dataset.teste){
+    if (testeDecide) testeDecide(b.dataset.teste === "ok" ? { ok: true } : { ok: false, mensagem: "A maquininha recusou o pagamento. Nada foi cobrado." });
+    return;
+  }
+  if (b.dataset.pag && pagamento){
+    const acao = b.dataset.pag;
+    if (acao === "voltar"){ ui.rascunho = pagamento.pedido; pagamento = null; location.hash = "#/checkout"; }
+    else if (acao === "cancelar"){ if (pagamento.ctrl) pagamento.ctrl.abort(); }
+    else if (acao === "tentar"){ pagamento.estado = "escolher"; pagamento.mensagem = ""; render(); }
+    else if (acao === "desistir"){ resetSessao(); }
+    return;
+  }
 });
 
 document.getElementById("app").addEventListener("input", e => {
@@ -1343,10 +1549,12 @@ document.getElementById("app").addEventListener("submit", e => {
   const anon = ui.quem === "anon";
   const nome = anon ? "" : f.nome.value.trim(), fone = f.fone.value.trim();
   if (!anon && !nome) { f.nome.focus(); toast("Digite seu nome ou escolha apoiar de forma anônima"); return; }
-  ultimoApoio = { nome, anon, fone, msg: f.msg.value.trim(), publico: !anon && f.publico.checked, cart: cart.map(l => ({ ...l })), quando: new Date().toISOString() };
-  ui.quem = null;
-  cart = []; saveCart(); syncCart();
-  location.hash = "#/obrigado";
+  const pedido = { nome, anon, fone, msg: f.msg.value.trim(), publico: !anon && f.publico.checked, cart: cart.map(l => ({ ...l })), quando: new Date().toISOString() };
+  const t = totals();
+  // A maquininha cobra hoje o que é único mais a 1ª mensalidade.
+  pagamento = { pedido, valor: t.hoje + t.mes, mes: t.mes, forma: null, estado: "escolher", mensagem: "" };
+  ui.rascunho = null;
+  location.hash = "#/pagamento";
 });
 
 /* =========================================================
@@ -1360,6 +1568,8 @@ const OBRIGADO_S = 20;            // segundos na tela de obrigado até voltar ao
 let idleT, idleCount, thanksT;
 
 function resetSessao(){
+  if (pagamento && pagamento.ctrl) pagamento.ctrl.abort();
+  pagamento = null; ui.rascunho = null;
   cart = []; ultimoApoio = null; ui.tab = {}; ui.plano = {}; ui.modoPadrao = null; ui.quem = null; ui.gal = 1;
   document.getElementById("idle").hidden = true;
   clearInterval(idleCount); clearInterval(thanksT);
@@ -1368,6 +1578,8 @@ function resetSessao(){
 }
 function armIdle(){
   clearTimeout(idleT); clearInterval(idleCount);
+  // Quem está pagando na maquininha não toca na tela: nada de aviso nem de limpeza.
+  if (pagamento && (pagamento.estado === "aguardando" || pagamento.estado === "aprovado")) return;
   const idle = document.getElementById("idle");
   if (!idle.hidden) return;
   // Na tela inicial sem nada escolhido não há o que limpar.
@@ -1383,6 +1595,58 @@ function armIdle(){
 ["pointerdown", "keydown", "touchstart", "scroll"].forEach(ev => window.addEventListener(ev, () => { if (document.getElementById("idle").hidden) armIdle(); }, { passive: true }));
 document.getElementById("idle-continue").addEventListener("click", () => { document.getElementById("idle").hidden = true; clearInterval(idleCount); armIdle(); });
 document.getElementById("idle-reset").addEventListener("click", resetSessao);
+
+/* =========================================================
+   TRAVAS DO TOTEM (parte do site)
+   Ligadas só no totem: endereço com ?totem=1 ou site instalado como
+   app no aparelho. Quem abre o link no celular navega normalmente.
+   A trava principal continua sendo a do aparelho (modo quiosque do
+   Android ou do Windows); aqui o site fecha o que está ao alcance dele.
+   ========================================================= */
+const TOTEM = new URLSearchParams(location.search).has("totem")
+  || matchMedia("(display-mode: fullscreen), (display-mode: standalone)").matches;
+if (TOTEM){
+  document.documentElement.classList.add("totem");
+  document.getElementById("viewport").setAttribute("content", "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover");
+  // Toque longo, arrastar e seleção de texto não abrem menus
+  ["contextmenu", "dragstart", "selectstart"].forEach(ev => document.addEventListener(ev, e => {
+    const el = e.target.nodeType === 1 ? e.target : e.target.parentElement;
+    if (ev === "selectstart" && el && el.closest("input,textarea")) return;
+    e.preventDefault();
+  }));
+  // Sem zoom de pinça, de trackpad ou de teclado
+  document.addEventListener("touchmove", e => { if (e.touches.length > 1) e.preventDefault(); }, { passive: false });
+  document.addEventListener("gesturestart", e => e.preventDefault());
+  window.addEventListener("wheel", e => { if (e.ctrlKey) e.preventDefault(); }, { passive: false });
+  window.addEventListener("keydown", e => {
+    if ((e.ctrlKey || e.metaKey) && ["+", "-", "=", "0", "p", "s", "o"].includes(e.key.toLowerCase())) e.preventDefault();
+  });
+  // Nenhum link leva para fora do site
+  document.addEventListener("click", e => {
+    const a = e.target.closest && e.target.closest("a[href]");
+    if (a && !a.getAttribute("href").startsWith("#")) e.preventDefault();
+  }, true);
+  window.open = () => null;
+  // O "voltar" do aparelho anda dentro do site, mas nunca sai dele: no começo do histórico, volta ao início
+  history.replaceState({ totemBase: true }, "");
+  history.pushState({ totem: true }, "");
+  window.addEventListener("popstate", e => {
+    if (!e.state || !e.state.totemBase) return;
+    history.pushState({ totem: true }, "");
+    if (!pagamento || pagamento.estado !== "aguardando") resetSessao();
+  });
+  // Tela sempre acesa, quando o navegador permite
+  const manterTelaAcesa = async () => {
+    try { if ("wakeLock" in navigator && document.visibilityState === "visible") await navigator.wakeLock.request("screen"); } catch (e) {}
+  };
+  document.addEventListener("visibilitychange", manterTelaAcesa);
+  manterTelaAcesa();
+  // Se o navegador ainda mostrar barras, o primeiro toque põe a página em tela cheia
+  window.addEventListener("pointerdown", () => {
+    const el = document.documentElement;
+    if (!document.fullscreenElement && el.requestFullscreen && matchMedia("(display-mode: browser)").matches) el.requestFullscreen().catch(() => {});
+  }, { passive: true });
+}
 
 /* Elementos entram quando aparecem na tela */
 let revealIO;
@@ -1447,7 +1711,11 @@ function armThanks(){
   thanksT = setInterval(() => { n--; const el = document.getElementById("thanks-count"); if (el) el.textContent = n; if (n <= 0) resetSessao(); }, 1000);
 }
 
-window.addEventListener("hashchange", () => { ui.gal = 1; render(); armIdle(); armThanks(); armGal(); });
+window.addEventListener("hashchange", () => {
+  // Durante o pagamento a tela não sai do lugar, nem pelo "voltar" do aparelho
+  if (pagamento && pagamento.estado === "aguardando" && location.hash !== "#/pagamento") { location.replace("#/pagamento"); return; }
+  ui.gal = 1; render(); armIdle(); armThanks(); armGal();
+});
 render(); armGal();
 </script>
 </body>

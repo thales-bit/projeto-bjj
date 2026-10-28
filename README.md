@@ -10,10 +10,20 @@ Plataforma de patrocínio dos atletas juvenis do Battlefield Jiu-Jitsu (Balneár
 2. **Como você quer apoiar?** Pontual (itens, pago uma vez) ou mensal (padrinho/madrinha com valor fixo).
 3. **Quem você quer apoiar?** Um atleta ou a equipe inteira.
 4. **Atletas / Perfil do atleta / Equipe:** história, conquistas, meta do mês e o catálogo já aberto no modo escolhido, com a opção de trocar.
-5. **Sua escolha:** resumo, apoio com nome ou anônimo, WhatsApp e mensagem opcionais, bloco reservado para o pagamento.
-6. **Obrigado:** confirmação e retorno automático ao início.
+5. **Sua escolha:** resumo, apoio com nome ou anônimo, WhatsApp e mensagem opcionais.
+6. **Pagamento:** crédito, débito ou Pix; a tela pede para seguir na maquininha e espera o resultado. Aprovado vai sozinho para o obrigado; recusado permite tentar de novo ou desistir.
+7. **Obrigado:** confirmação e retorno automático ao início.
 
-Um indicador de etapas no topo mostra em que passo a pessoa está. O rodapé é fixo no pé da tela em todas as páginas: mostra a marca e, quando há itens escolhidos, o total e o botão "Finalizar". Ainda não há integração de pagamento. O bloco no checkout marca onde ela entra.
+Um indicador de etapas no topo mostra em que passo a pessoa está. O rodapé é fixo no pé da tela em todas as páginas: mostra a marca e, quando há itens escolhidos, o total e o botão "Finalizar".
+
+## Pagamento na maquininha
+
+O pagamento roda em **modo de teste** até a maquininha da Elgin ser ligada: a tela aprova sozinha em 8 segundos e tem botões para simular aprovado ou recusado. A maquininha cobra hoje os itens únicos mais a 1ª mensalidade, se houver. As mensalidades seguintes ainda precisam de uma solução de cobrança recorrente, porque o TEF da Elgin não faz cobrança mensal.
+
+Para ligar a maquininha, mude `PAGAMENTO.modo` no bloco "PAGAMENTO NA MAQUININHA" do script:
+
+- `"tefweb"`: o app Elgin TEF HUB instalado no próprio totem (Android ou Windows) atende em `http://localhost:2001/tef/v1` e conduz o pinpad. A função `cobrarTefWeb` já chama `/venda/credito`, `/venda/debito` e `/pix`; falta validar na homologação com a Elgin.
+- Smart POS ao lado do totem (POS Comandas, API da Elgin na internet): precisa de uma função no Vercel para guardar o token da Elgin, que não pode ficar na página.
 
 ## Modo totem
 
@@ -26,6 +36,18 @@ A página foi pensada para rodar num totem de autoatendimento, em tela de toque,
 - Botões e alvos de toque têm no mínimo 44px.
 
 Os tempos ficam nas constantes `INATIVIDADE_AVISO_S`, `INATIVIDADE_LIMITE_S` e `OBRIGADO_S` no início do bloco "MODO TOTEM" do script.
+
+### Travas do totem
+
+No totem, abra o site com `?totem=1` no endereço (ex.: `https://SEU-SITE.vercel.app/?totem=1`) ou instale como app pelo navegador, que já abre nesse modo, em tela cheia e na vertical (`manifest.webmanifest`). Nesse modo o site:
+
+- bloqueia menu de toque longo, seleção de texto, arrastar imagens e zoom;
+- não deixa nenhum link levar para fora do site;
+- faz o "voltar" do aparelho andar só dentro do site, voltando ao início quando acaba o histórico;
+- não sai da tela de pagamento enquanto a maquininha está cobrando;
+- mantém a tela acesa e, num navegador comum, entra em tela cheia no primeiro toque.
+
+Sem `?totem=1`, quem abre o link no celular navega normalmente. A trava principal continua sendo a do aparelho: modo quiosque do Android ou do Windows, sem barra, sem botões do sistema e sem outros apps.
 
 ## Identidade visual
 
