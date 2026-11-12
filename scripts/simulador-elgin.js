@@ -3,13 +3,15 @@
 //   node scripts/simulador-elgin.js
 //
 // Sobe três servidores locais:
-//   http://127.0.0.1:8080  o site, com a função api/pagamento.js como no Vercel
+//   http://127.0.0.1:8080  o site, com as funções api/pagamento.js e api/apoio.js como no Vercel
 //   http://localhost:2001  imita o app Elgin TEF HUB (TEF Web, pinpad no totem)
 //   http://127.0.0.1:4010  imita a API POS Comandas (Smart POS ao lado do totem)
 //
 // Abra no navegador:
-//   http://127.0.0.1:8080/?totem=1&pagamento=tefweb
+//   http://127.0.0.1:8080/?totem=1&pagamento=tefweb&chave=chave-teste
 //   http://127.0.0.1:8080/?totem=1&pagamento=pos&chave=chave-teste
+//   http://127.0.0.1:8080/_planilha   o que o registro de apoios gravou (planilha de mentira
+//                                     rodando o scripts/planilha-apoios.gs de verdade)
 //
 // Para escolher o que a "maquininha" responde na próxima cobrança:
 //   http://127.0.0.1:8080/_cenario?tef=aprova|recusa|ocupado|fora
@@ -27,7 +29,15 @@ process.env.ELGIN_POS_URL = process.env.ELGIN_POS_URL || "http://127.0.0.1:4010/
 process.env.ELGIN_POS_TOKEN = process.env.ELGIN_POS_TOKEN || "token-teste";
 process.env.ELGIN_POS_DESTINO = process.env.ELGIN_POS_DESTINO || "846a6b5f68dcc478";
 process.env.TOTEM_CHAVE = process.env.TOTEM_CHAVE || "chave-teste";
-const funcao = require(path.join(RAIZ, "api/pagamento.js"));
+process.env.PLANILHA_URL = process.env.PLANILHA_URL || "http://127.0.0.1:8080/_planilha";
+process.env.PLANILHA_SEGREDO = process.env.PLANILHA_SEGREDO || "segredo-de-teste-123";
+const funcoes = {
+  "/api/pagamento": require(path.join(RAIZ, "api/pagamento.js")),
+  "/api/apoio": require(path.join(RAIZ, "api/apoio.js")),
+};
+const { criarPlanilha } = require(path.join(__dirname, "planilha-falsa.js"));
+const planilha = criarPlanilha(path.join(__dirname, "planilha-apoios.gs"), process.env.PLANILHA_SEGREDO);
+const respostasPlanilha = new Map();
 
 const cenario = { tef: "aprova", pos: "aprova" };
 const TIPOS = { ".html": "text/html; charset=utf-8", ".js": "text/javascript", ".png": "image/png", ".jpg": "image/jpeg", ".webmanifest": "application/manifest+json", ".json": "application/json" };
@@ -41,13 +51,37 @@ http.createServer(async (req, res) => {
     for (const k of ["tef", "pos"]) if (u.searchParams.get(k)) cenario[k] = u.searchParams.get(k);
     return responder(res, 200, cenario);
   }
-  if (u.pathname === "/api/pagamento") {
+  if (funcoes[u.pathname]) {
     const corpo = await lerCorpo(req);
     req.query = Object.fromEntries(u.searchParams);
     try { req.body = corpo ? JSON.parse(corpo) : undefined; } catch (e) { req.body = corpo; }
     res.status = c => { res.statusCode = c; return res; };
     res.json = o => { res.setHeader("Content-Type", "application/json"); res.end(JSON.stringify(o)); };
-    return funcao(req, res);
+    return funcoes[u.pathname](req, res);
+  }
+  // Planilha: como o Apps Script, o POST responde com um redirecionamento para a resposta
+  if (u.pathname === "/_planilha" && req.method === "POST") {
+    const id = String(respostasPlanilha.size + 1);
+    respostasPlanilha.set(id, planilha.doPost({ postData: { contents: await lerCorpo(req), type: req.headers["content-type"] } }));
+    console.log("Planilha:", respostasPlanilha.get(id));
+    res.statusCode = 302; res.setHeader("Location", `/_planilha/resposta?id=${id}`);
+    return res.end();
+  }
+  if (u.pathname === "/_planilha/resposta") return responder(res, 200, respostasPlanilha.get(u.searchParams.get("id")) || {});
+  if (u.pathname === "/_planilha.json") return responder(res, 200, Object.fromEntries(planilha.nomes().map(n => [n, planilha.aba(n).linhas])));
+  if (u.pathname === "/_planilha") {
+    const esc = t => String(t).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+    const tabelas = planilha.nomes().map(n => {
+      const a = planilha.aba(n);
+      const linhas = a.linhas.map((l, i) => `<tr>${l.map((t, j) => {
+        const c = a.celulas[i][j], tag = i === 0 ? "th" : "td";
+        const conteudo = c.link ? `<a href="${esc(c.link)}">${esc(t)}</a>` : esc(t);
+        return `<${tag}${c.fundo && i ? ` style="background:${esc(c.fundo)}"` : ""}>${conteudo}</${tag}>`;
+      }).join("")}</tr>`).join("");
+      return `<h2>${esc(n)}</h2><table>${linhas || "<tr><td>(vazia)</td></tr>"}</table>`;
+    }).join("");
+    res.setHeader("Content-Type", "text/html; charset=utf-8");
+    return res.end(`<!doctype html><meta charset="utf-8"><title>Planilha de apoios (simulador)</title><style>body{font:14px system-ui;margin:16px}table{border-collapse:collapse}th,td{border:1px solid #ccc;padding:4px 8px;white-space:pre-wrap;vertical-align:top}th{background:#e5e7eb}</style><h1>Planilha de apoios (simulador)</h1>${tabelas}`);
   }
   const arquivo = path.join(RAIZ, decodeURIComponent(u.pathname === "/" ? "/index.html" : u.pathname));
   if (!arquivo.startsWith(RAIZ) || !fs.existsSync(arquivo) || fs.statSync(arquivo).isDirectory()) { res.statusCode = 404; return res.end(); }
@@ -111,7 +145,8 @@ http.createServer(async (req, res) => {
 }).listen(4010, "127.0.0.1");
 
 console.log(`Simulador da Elgin no ar.
-  Pinpad no totem (TEF Web):  http://127.0.0.1:8080/?totem=1&pagamento=tefweb
+  Pinpad no totem (TEF Web):  http://127.0.0.1:8080/?totem=1&pagamento=tefweb&chave=chave-teste
   Smart POS (POS Comandas):   http://127.0.0.1:8080/?totem=1&pagamento=pos&chave=chave-teste
+  Planilha de apoios:         http://127.0.0.1:8080/_planilha
   Próxima resposta:           http://127.0.0.1:8080/_cenario?tef=recusa  (aprova|recusa|ocupado|fora)
                               http://127.0.0.1:8080/_cenario?pos=recusa  (aprova|recusa|espera)`);

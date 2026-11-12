@@ -10,19 +10,19 @@
 //   ELGIN_POS_DESTINO       identificador da maquininha que recebe a cobrança
 //   ELGIN_POS_URL           endereço da API; sem ela, usa o de homologação
 //   ELGIN_POS_TIPO_DESTINO  tipo do destino (padrão 0, como no exemplo da Elgin)
-//   TOTEM_CHAVE             opcional: se definida, o totem precisa abrir o site com ?chave=<mesmo valor>
+//   TOTEM_CHAVE             se definida, o totem precisa abrir o site com &chave=<mesmo valor>
+//                           (o registro de apoios, em api/apoio.js, exige essa chave)
 //   VALOR_MAXIMO            opcional: maior cobrança aceita, em reais (padrão 5000)
 //
 // Documentação: wiki ElginDeveloperCommunity/TEF-Elgin, página "DOCUMENTAÇÃO ‐ POS COMANDAS".
 
-const URL_HOMOLOGACAO = "https://hml-elginpay-cap-core-gsfsbndphncyamdz.brazilsouth-01.azurewebsites.net/api/v1";
+const { elgin, APROVADO } = require("./_elgin.js");
 
 // Modalidade da Elgin: 1 débito, 2 crédito, 3 Pix
 const MODALIDADE = { debito: 1, credito: 2, pix: 3 };
 
 // Status da Elgin: 0 criada, 1 em processamento, 2 pendente, 3 confirmada, 4 desfeita,
-// 5 concluída, 6 falhou, 7 abortada, 8 cancelada, 10 expirada, 11 negada
-const APROVADO = new Set([3, 5]);
+// 5 concluída, 6 falhou, 7 abortada, 8 cancelada, 10 expirada, 11 negada (3 e 5 = pago)
 const NAO_APROVADO = {
   4: "O pagamento foi desfeito. Nada foi cobrado.",
   6: "O pagamento falhou. Nada foi cobrado.",
@@ -46,27 +46,6 @@ function resumo(p) {
     bandeira: (p && p.bandeira) || null,
     intervaloS: (p && p.intervaloEntreBuscas) || 3,
   };
-}
-
-async function elgin(caminho, opcoes = {}) {
-  const base = (process.env.ELGIN_POS_URL || URL_HOMOLOGACAO).replace(/\/+$/, "");
-  const r = await fetch(base + caminho, {
-    ...opcoes,
-    headers: {
-      Authorization: `Bearer ${process.env.ELGIN_POS_TOKEN}`,
-      "Content-Type": "application/json",
-      Accept: "application/json",
-    },
-  });
-  const texto = await r.text();
-  let corpo = null;
-  try { corpo = texto ? JSON.parse(texto) : null; } catch (e) { corpo = { message: texto.slice(0, 300) }; }
-  if (!r.ok) {
-    const erro = new Error((corpo && (corpo.message || corpo.mensagem)) || `a Elgin respondeu ${r.status}`);
-    erro.http = r.status;
-    throw erro;
-  }
-  return corpo;
 }
 
 function lerCorpo(req) {

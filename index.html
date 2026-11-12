@@ -1262,7 +1262,7 @@ function pageCheckout(){
             <div class="methods"><span class="chip">${ICONS.card} Crédito</span><span class="chip">${ICONS.card} Débito</span><span class="chip">${ICONS.pix} Pix</span></div>
           </div>
           <button class="btn btn-primary btn-xl" type="submit">Ir para o pagamento ${ICONS.arrow}</button>
-          <p class="muted small">Ao confirmar você concorda que o valor será repassado ao projeto para a finalidade escolhida.</p>
+          <p class="muted small">Ao confirmar você concorda que o valor será repassado ao projeto para a finalidade escolhida. Seu nome, WhatsApp e mensagem ficam guardados pela equipe do Battlefield só para entregar o apoio, agradecer e mandar a foto.</p>
         </form>
       </div>
     </section>`;
@@ -1288,6 +1288,7 @@ const PAGAMENTO = {
   modoPadrao: "teste",                        // quando a Elgin liberar: "tefweb" ou "pos"
   tefWebUrl: "http://localhost:2001/tef/v1",  // servidor local do app Elgin TEF HUB
   posApi: "/api/pagamento",                   // função do Vercel (api/pagamento.js)
+  apoioApi: "/api/apoio",                     // grava quem apoiou o quê na planilha (api/apoio.js)
   aprovaTesteS: 8,                            // teste: aprova sozinho depois disso
   limitePosS: 180,                            // pos: sem pagamento nesse tempo, a cobrança é cancelada
 };
@@ -1418,7 +1419,7 @@ async function cobrarPos(p, sinal){
   let s = {};
   try { s = await posApi("POST", "", { forma: p.forma, valor: p.valor, codigo: `${p.pedido.codigo}-${p.tentativa}`, descricao: `Apoio: ${alvos}` }); } catch (e) {}
   if (!s.id) return { ok: false, mensagem: s.mensagem || "Não foi possível enviar a cobrança para a maquininha. Chame alguém da equipe." };
-  const id = encodeURIComponent(s.id), intervalo = Math.max(2, Number(s.intervaloS) || 3) * 1000;
+  const posId = s.id, id = encodeURIComponent(s.id), intervalo = Math.max(2, Number(s.intervaloS) || 3) * 1000;
   const fim = Date.now() + PAGAMENTO.limitePosS * 1000;
   while (!s.final){
     if (sinal.aborted || Date.now() > fim){
@@ -1431,7 +1432,7 @@ async function cobrarPos(p, sinal){
     if (sinal.aborted) continue;
     try { s = await posApi("GET", `?id=${id}`); } catch (e) { /* rede oscilou: tenta de novo no próximo intervalo */ }
   }
-  return s.ok ? { ok: true, nsu: s.nsu || null, autorizacao: s.autorizacao || null }
+  return s.ok ? { ok: true, nsu: s.nsu || null, autorizacao: s.autorizacao || null, posId }
               : { ok: false, mensagem: s.mensagem || "O pagamento não foi aprovado." };
 }
 
@@ -1444,6 +1445,8 @@ async function iniciarPagamento(forma){
   clearTimeout(idleT); clearInterval(idleCount);  // quem está pagando não leva o aviso de inatividade
   render();
   const r = await cobrar(p, p.ctrl.signal);
+  // Pagou: registra já, mesmo que a tela tenha mudado enquanto a maquininha respondia
+  if (r.ok && TOTEM){ try { registrarApoio(montarRegistro(p, r)); } catch (e) { console.error("Registro do apoio:", e); } }
   if (pagamento !== p) return;
   if (r.ok){
     p.estado = "aprovado"; render();
@@ -1459,6 +1462,64 @@ function concluirPagamento(p, r){
   pagamento = null; ui.quem = null; ui.rascunho = null;
   cart = []; saveCart(); syncCart();
   location.replace("#/obrigado");  // "voltar" não leva de novo ao pagamento
+}
+
+/* ---------- Registro de quem apoiou o quê ----------
+   Cada pagamento aprovado no totem vira linhas na planilha do Google da
+   equipe (api/apoio.js grava; o script da planilha está em
+   scripts/planilha-apoios.gs). O registro fica guardado no aparelho até a
+   gravação dar certo: sem internet ou com a planilha fora do ar, o totem
+   reenvia sozinho depois. Reenviar não duplica: a planilha ignora código
+   de apoio repetido. */
+const FILA_APOIOS = "bf-apoios-pendentes";
+let filaApoios = (() => {
+  try { const f = JSON.parse(localStorage.getItem(FILA_APOIOS) || "[]"); return Array.isArray(f) ? f : []; }
+  catch (e) { return []; }
+})();
+let enviandoFila = false, filaDeNovo = false;
+
+function montarRegistro(p, r){
+  const ped = p.pedido;
+  return {
+    codigo: ped.codigo, quando: new Date().toISOString(),
+    nome: ped.nome, anon: ped.anon, fone: ped.fone, msg: ped.msg, publico: ped.publico,
+    itens: ped.cart.map(l => ({ para: alvoNome(l.alvo), item: l.nome, tipo: l.tipo, qtd: l.qtd, valor: l.valor })),
+    total: p.valor, forma: p.forma, modo: PAGAMENTO.modo,
+    nsu: r.nsu || "", autorizacao: r.autorizacao || "", posId: r.posId || "",
+  };
+}
+function guardarFila(){
+  try { localStorage.setItem(FILA_APOIOS, JSON.stringify(filaApoios)); } catch (e) { /* segue só na memória */ }
+}
+function registrarApoio(reg){
+  if (!filaApoios.some(x => x.codigo === reg.codigo)) filaApoios.push(reg);
+  filaApoios = filaApoios.slice(-500);
+  guardarFila();
+  enviarFila();
+}
+async function enviarFila(){
+  if (enviandoFila){ filaDeNovo = true; return; }
+  enviandoFila = true;
+  let falhas = 0;
+  try {
+    for (const reg of filaApoios.slice()){
+      let http;
+      try {
+        http = (await fetch(PAGAMENTO.apoioApi, {
+          method: "POST", cache: "no-store",
+          headers: { "Content-Type": "application/json", "X-Totem-Chave": PAGAMENTO.chave },
+          body: JSON.stringify(reg),
+        })).status;
+      } catch (e) { break; }  // sem internet: tenta de novo mais tarde
+      if ((http >= 200 && http < 300) || http === 400){
+        if (http === 400) console.warn("Registro de apoio recusado:", reg.codigo);
+        filaApoios = filaApoios.filter(x => x !== reg); guardarFila(); falhas = 0;
+      } else if (++falhas >= 3) break;  // chave ou planilha ainda não configuradas: fica guardado
+    }
+  } finally {
+    enviandoFila = false;
+    if (filaDeNovo){ filaDeNovo = false; setTimeout(enviarFila, 0); }
+  }
 }
 
 function pagePagamento(){
@@ -1731,6 +1792,10 @@ if (TOTEM){
   document.documentElement.classList.add("totem");
   // Pinpad no totem: já sobe o serviço da Elgin ao abrir, e não só no primeiro pagamento
   if (PAGAMENTO.modo === "tefweb") ligarTefWeb();
+  // Registros de apoio que ficaram no aparelho (internet caiu, totem reiniciou) vão para a planilha
+  setTimeout(enviarFila, 3000);
+  setInterval(enviarFila, 5 * 60 * 1000);
+  window.addEventListener("online", () => enviarFila());
   document.getElementById("viewport").setAttribute("content", "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover");
   // Toque longo, arrastar e seleção de texto não abrem menus
   ["contextmenu", "dragstart", "selectstart"].forEach(ev => document.addEventListener(ev, e => {
