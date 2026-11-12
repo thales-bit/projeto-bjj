@@ -1269,20 +1269,33 @@ function pageCheckout(){
 }
 
 /* =========================================================
-   PAGAMENTO NA MAQUININHA
+   PAGAMENTO NA MAQUININHA (Elgin)
    Como nos totens de lanchonete: escolhe a forma, paga na
    maquininha e a tela vai sozinha para o "Obrigado" e depois
    para o início.
-   Enquanto a maquininha da Elgin não está ligada, roda em modo
-   de teste. Para ligar: PAGAMENTO.modo = "tefweb" (app Elgin TEF
-   HUB no próprio totem) ou, se a Elgin fornecer Smart POS, uma
-   função no Vercel com a API POS Comandas.
+
+   Três modos, escolhidos no endereço do totem (?pagamento=...):
+   - teste:  sem maquininha; aprova sozinho e tem botões para simular.
+   - tefweb: pinpad ligado ao totem. O app Elgin TEF HUB (Android ou
+             Windows) atende em localhost:2001 e mostra as telas da
+             maquininha por cima do site.
+   - pos:    Smart POS ao lado do totem (API POS Comandas da Elgin),
+             pela função api/pagamento.js deste site no Vercel, que
+             guarda o token da Elgin.
+   Sem ?pagamento=, vale PAGAMENTO.modoPadrao.
    ========================================================= */
 const PAGAMENTO = {
-  modo: "teste",                              // "teste" | "tefweb"
+  modoPadrao: "teste",                        // quando a Elgin liberar: "tefweb" ou "pos"
   tefWebUrl: "http://localhost:2001/tef/v1",  // servidor local do app Elgin TEF HUB
-  aprovaTesteS: 8,                            // modo de teste: aprova sozinho depois disso
+  posApi: "/api/pagamento",                   // função do Vercel (api/pagamento.js)
+  aprovaTesteS: 8,                            // teste: aprova sozinho depois disso
+  limitePosS: 180,                            // pos: sem pagamento nesse tempo, a cobrança é cancelada
 };
+{
+  const q = new URLSearchParams(location.search);
+  PAGAMENTO.modo = ["teste", "tefweb", "pos"].includes(q.get("pagamento")) ? q.get("pagamento") : PAGAMENTO.modoPadrao;
+  PAGAMENTO.chave = q.get("chave") || "";     // pos: chave do totem, se TOTEM_CHAVE estiver definida no Vercel
+}
 const FORMAS = [
   { id: "credito", nome: "Crédito", dica: "Cartão na maquininha", icone: ICONS.card },
   { id: "debito",  nome: "Débito",  dica: "Cartão na maquininha", icone: ICONS.card },
@@ -1292,8 +1305,18 @@ const ICON_MAQUININHA = '<svg viewBox="0 0 24 24" fill="none" stroke="currentCol
 let pagamento = null;    // pedido esperando pagamento
 let testeDecide = null;  // modo de teste: botões "simular"
 
+const esperar = (ms, sinal) => new Promise(fim => {
+  const t = setTimeout(fim, ms);
+  if (sinal) sinal.addEventListener("abort", () => { clearTimeout(t); fim(); }, { once: true });
+});
+
 function cobrar(p, sinal){
   if (PAGAMENTO.modo === "tefweb") return cobrarTefWeb(p);
+  if (PAGAMENTO.modo === "pos") return cobrarPos(p, sinal);
+  return cobrarTeste(sinal);
+}
+
+function cobrarTeste(sinal){
   return new Promise(resolve => {
     const t = setTimeout(() => decide({ ok: true }), PAGAMENTO.aprovaTesteS * 1000);
     const decide = r => { clearTimeout(t); testeDecide = null; resolve(r); };
@@ -1302,28 +1325,121 @@ function cobrar(p, sinal){
   });
 }
 
-/* Elgin TEF Web: o app da Elgin no totem atende em localhost e conduz a
-   maquininha. A Elgin só devolve NSU e data quando a transação passa.
-   A validar na homologação com a Elgin. */
+// Mensagem da maquininha em frase normal (a Elgin costuma mandar em maiúsculas)
+function fraseMaquininha(m){
+  m = String(m || "").trim().replace(/\s+/g, " ");
+  if (!m) return "";
+  if (m === m.toUpperCase()) m = m.toLowerCase();
+  m = m.charAt(0).toUpperCase() + m.slice(1);
+  return /[.!?]$/.test(m) ? m : m + ".";
+}
+
+/* ---------- TEF Web: pinpad ligado ao totem ----------
+   Contrato lido no app Elgin TEF HUB Android 2.07 e na documentação:
+   - GET  /tef/v1          → {"status":"running"} quando o serviço está no ar
+   - POST /venda/credito   {valor:"120.00", parcelas:"1", financiamento:"1"}
+   - POST /venda/debito    {valor}
+   - POST /pix             {valor}
+   A chamada só volta quando a transação termina: 200 se a tela da Elgin
+   fechou normalmente, 500 se foi cancelada ou deu erro, 409 se havia outra
+   operação em curso e 403 sem a permissão "Sobrepor a outros apps".
+   O resultado vem em {retorno, mensagem, dados:{funcao, resultado:{mensagem,
+   tef:{nsuTransacao, codigoAutorizacao, mensagemResultado, ...}}}}; a
+   documentação antiga usa {funcao, mensagem, resultado}. No Android o campo
+   "codigo" vem sempre 0, então aprovado = NSU ou autorização preenchidos e
+   nenhuma palavra de recusa na mensagem. A validar na homologação. */
+async function tefWebNoAr(){
+  try { return (await fetch(PAGAMENTO.tefWebUrl, { cache: "no-store" })).ok; } catch (e) { return false; }
+}
+let tefWebLigando = null;
+function ligarTefWeb(){
+  // No Android o serviço sobe pelo link intent://connect/start (documentação Elgin TEF Web)
+  if (!tefWebLigando) tefWebLigando = (async () => {
+    if (await tefWebNoAr()) return true;
+    if (!/Android/i.test(navigator.userAgent)) return false;
+    location.href = "intent://connect/start";
+    for (let i = 0; i < 24; i++){ await esperar(500); if (await tefWebNoAr()) return true; }
+    return false;
+  })().finally(() => { tefWebLigando = null; });
+  return tefWebLigando;
+}
+
+function lerTefWeb(http, corpo){
+  let dados = corpo && (corpo.dados !== undefined ? corpo.dados : corpo.resultado !== undefined ? corpo.resultado : corpo);
+  if (typeof dados === "string"){ try { dados = JSON.parse(dados); } catch (e) { dados = {}; } }
+  dados = dados || {};
+  const res = dados.resultado && typeof dados.resultado === "object" ? dados.resultado : dados;
+  const tef = res.tef && typeof res.tef === "object" ? res.tef : res;
+  const nsu = String(tef.nsuTransacao || tef.nsu || tef.nsuTerminal || "");
+  const autorizacao = String(tef.codigoAutorizacao || tef.autorizacao || "").trim();
+  const mensagem = String(tef.mensagemResultado || res.mensagem || (corpo && corpo.mensagem) || "");
+  const recusa = /negad|recusad|cancelad|abortad|desfeit|expirad|erro|falh|n[ãa]o autoriz|inv[áa]lid|sem saldo|insuficiente/i
+    .test(`${mensagem} ${tef.resultadoTransacao || ""}`);
+  const ok = http >= 200 && http < 300 && (/[1-9]/.test(nsu) || autorizacao !== "") && !recusa;
+  if (ok) return { ok: true, nsu: nsu || null, autorizacao: autorizacao || null };
+  return { ok: false, mensagem: mensagem ? `A maquininha respondeu: ${fraseMaquininha(mensagem)}` : "O pagamento não foi aprovado." };
+}
+
 async function cobrarTefWeb(p){
+  if (!(await ligarTefWeb())) return { ok: false, mensagem: "A maquininha não está conectada. Chame alguém da equipe." };
   const valor = p.valor.toFixed(2);
   const rota = p.forma === "pix" ? "/pix" : `/venda/${p.forma}`;
   const corpo = p.forma === "credito" ? { valor, parcelas: "1", financiamento: "1" } : { valor };
+  let resp;
   try {
-    const resp = await fetch(PAGAMENTO.tefWebUrl + rota, { method: "POST", headers: { Accept: "application/json", "Content-Type": "application/json" }, body: JSON.stringify(corpo) });
-    const d = await resp.json();
-    const r = typeof d.resultado === "string" ? (d.resultado.includes("{") ? JSON.parse(d.resultado) : {}) : (d.resultado || {});
-    if (r.nsu || r.data) return { ok: true, nsu: r.nsu || null, autorizacao: r.autorizacao || null };
-    return { ok: false, mensagem: r.mensagem || d.mensagem || "Pagamento não aprovado." };
+    resp = await fetch(PAGAMENTO.tefWebUrl + rota, { method: "POST", headers: { Accept: "application/json", "Content-Type": "application/json" }, body: JSON.stringify(corpo) });
   } catch (e) {
-    return { ok: false, mensagem: "A maquininha não respondeu. Chame alguém da equipe." };
+    // A conexão caiu com a transação em andamento: não dá para saber se cobrou.
+    return { ok: false, mensagem: "Não conseguimos confirmar o pagamento. Chame alguém da equipe antes de tentar de novo." };
   }
+  if (resp.status === 409) return { ok: false, mensagem: "A maquininha ainda está terminando outra operação. Aguarde um instante e tente de novo." };
+  if (resp.status === 403) return { ok: false, mensagem: "A maquininha precisa de uma liberação no aparelho. Chame alguém da equipe." };
+  const d = await resp.json().catch(() => null);
+  console.info("TEF Web", resp.status, d);  // registro para a homologação
+  return lerTefWeb(resp.status, d);
+}
+
+/* ---------- POS Comandas: Smart POS ao lado do totem ----------
+   O site fala com api/pagamento.js (função do Vercel), que guarda o token
+   da Elgin: POST cria a cobrança na maquininha, GET consulta (a cada
+   intervaloS segundos, como a Elgin pede) e DELETE cancela enquanto
+   ninguém pagou. */
+async function posApi(metodo, consulta, corpo){
+  const r = await fetch(PAGAMENTO.posApi + (consulta || ""), {
+    method: metodo, cache: "no-store",
+    headers: { "Content-Type": "application/json", "X-Totem-Chave": PAGAMENTO.chave },
+    body: corpo ? JSON.stringify(corpo) : undefined,
+  });
+  return { http: r.status, ...(await r.json().catch(() => ({}))) };
+}
+
+async function cobrarPos(p, sinal){
+  const alvos = [...new Set(p.pedido.cart.map(l => alvoNome(l.alvo)))].join(", ");
+  let s = {};
+  try { s = await posApi("POST", "", { forma: p.forma, valor: p.valor, codigo: `${p.pedido.codigo}-${p.tentativa}`, descricao: `Apoio: ${alvos}` }); } catch (e) {}
+  if (!s.id) return { ok: false, mensagem: s.mensagem || "Não foi possível enviar a cobrança para a maquininha. Chame alguém da equipe." };
+  const id = encodeURIComponent(s.id), intervalo = Math.max(2, Number(s.intervaloS) || 3) * 1000;
+  const fim = Date.now() + PAGAMENTO.limitePosS * 1000;
+  while (!s.final){
+    if (sinal.aborted || Date.now() > fim){
+      try { s = await posApi("DELETE", `?id=${id}`); } catch (e) {}
+      try { s = await posApi("GET", `?id=${id}`); } catch (e) {}  // pagou bem na hora do cancelamento?
+      if (s.ok) break;
+      return { ok: false, mensagem: sinal.aborted ? "Pagamento cancelado. Nada foi cobrado." : "O tempo para pagar acabou. Nada foi cobrado." };
+    }
+    await esperar(intervalo, sinal);
+    if (sinal.aborted) continue;
+    try { s = await posApi("GET", `?id=${id}`); } catch (e) { /* rede oscilou: tenta de novo no próximo intervalo */ }
+  }
+  return s.ok ? { ok: true, nsu: s.nsu || null, autorizacao: s.autorizacao || null }
+              : { ok: false, mensagem: s.mensagem || "O pagamento não foi aprovado." };
 }
 
 async function iniciarPagamento(forma){
   const p = pagamento;
   if (!p || p.estado !== "escolher") return;
   p.forma = forma; p.estado = "aguardando"; p.mensagem = "";
+  p.tentativa = (p.tentativa || 0) + 1;
   p.ctrl = new AbortController();
   clearTimeout(idleT); clearInterval(idleCount);  // quem está pagando não leva o aviso de inatividade
   render();
@@ -1367,12 +1483,15 @@ function pagePagamento(){
       <div class="maquininha" aria-hidden="true">${ICON_MAQUININHA}</div>
       ${sub(forma.nome)}
       ${duo("Siga na", "maquininha.", "h1")}
-      <p class="pay-dica">${p.forma === "pix" ? "Abra o app do seu banco e leia o <b>QR code</b> que aparece na maquininha." : "<b>Insira, aproxime ou passe</b> o cartão e siga as instruções da maquininha."}</p>
+      <p class="pay-dica">${p.forma !== "pix" ? "<b>Insira, aproxime ou passe</b> o cartão e siga as instruções da maquininha."
+        : PAGAMENTO.modo === "tefweb" ? "Abra o app do seu banco e leia o <b>QR code</b> que vai aparecer na tela."
+        : "Abra o app do seu banco e leia o <b>QR code</b> que aparece na maquininha."}</p>
       ${total}
-      ${PAGAMENTO.modo === "teste"
-        ? `<button class="btn btn-secondary btn-lg" type="button" data-pag="cancelar">${ICONS.x} Cancelar pagamento</button>
-           <div class="pay-teste"><b>Modo de teste</b><span>A maquininha ainda não está ligada. O pagamento é aprovado sozinho em ${PAGAMENTO.aprovaTesteS} segundos.</span><div class="acoes"><button class="btn btn-secondary btn-sm" type="button" data-teste="ok">Simular aprovado</button><button class="btn btn-secondary btn-sm" type="button" data-teste="recusa">Simular recusado</button></div></div>`
-        : `<p class="muted">Para desistir, aperte o botão vermelho da maquininha.</p>`}
+      ${PAGAMENTO.modo === "tefweb"
+        ? `<p class="muted">Para desistir, aperte o botão vermelho da maquininha.</p>`
+        : `<button class="btn btn-secondary btn-lg" type="button" data-pag="cancelar">${ICONS.x} Cancelar pagamento</button>`}
+      ${PAGAMENTO.modo === "pos" ? `<p class="muted">A cobrança aparece na maquininha ao lado da tela.</p>` : ""}
+      ${PAGAMENTO.modo === "teste" ? `<div class="pay-teste"><b>Modo de teste</b><span>A maquininha ainda não está ligada. O pagamento é aprovado sozinho em ${PAGAMENTO.aprovaTesteS} segundos.</span><div class="acoes"><button class="btn btn-secondary btn-sm" type="button" data-teste="ok">Simular aprovado</button><button class="btn btn-secondary btn-sm" type="button" data-teste="recusa">Simular recusado</button></div></div>` : ""}
     </div></section>`;
 
   if (p.estado === "aprovado") return `
@@ -1413,6 +1532,7 @@ function pageObrigado(){
         ${u.msg ? `<div class="note">Sua mensagem: “${esc(u.msg)}”</div>` : ""}
       </div>
       <a class="btn btn-primary btn-xl" href="#/">Concluir</a>
+      ${u.codigo ? `<p class="muted small">Código do apoio: <b class="num">${esc(u.codigo)}</b></p>` : ""}
       <p class="muted small">A tela volta ao início sozinha em <span id="thanks-count" class="num">20</span> segundos.</p>
     </div></section>`;
 }
@@ -1549,7 +1669,9 @@ document.getElementById("app").addEventListener("submit", e => {
   const anon = ui.quem === "anon";
   const nome = anon ? "" : f.nome.value.trim(), fone = f.fone.value.trim();
   if (!anon && !nome) { f.nome.focus(); toast("Digite seu nome ou escolha apoiar de forma anônima"); return; }
-  const pedido = { nome, anon, fone, msg: f.msg.value.trim(), publico: !anon && f.publico.checked, cart: cart.map(l => ({ ...l })), quando: new Date().toISOString() };
+  // Código curto do apoio: vai para a Elgin junto com a cobrança e aparece no Obrigado
+  const codigo = "BF" + Date.now().toString(36).slice(-5).toUpperCase() + Math.random().toString(36).slice(2, 4).toUpperCase();
+  const pedido = { codigo, nome, anon, fone, msg: f.msg.value.trim(), publico: !anon && f.publico.checked, cart: cart.map(l => ({ ...l })), quando: new Date().toISOString() };
   const t = totals();
   // A maquininha cobra hoje o que é único mais a 1ª mensalidade.
   pagamento = { pedido, valor: t.hoje + t.mes, mes: t.mes, forma: null, estado: "escolher", mensagem: "" };
@@ -1607,6 +1729,8 @@ const TOTEM = new URLSearchParams(location.search).has("totem")
   || matchMedia("(display-mode: fullscreen), (display-mode: standalone)").matches;
 if (TOTEM){
   document.documentElement.classList.add("totem");
+  // Pinpad no totem: já sobe o serviço da Elgin ao abrir, e não só no primeiro pagamento
+  if (PAGAMENTO.modo === "tefweb") ligarTefWeb();
   document.getElementById("viewport").setAttribute("content", "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover");
   // Toque longo, arrastar e seleção de texto não abrem menus
   ["contextmenu", "dragstart", "selectstart"].forEach(ev => document.addEventListener(ev, e => {

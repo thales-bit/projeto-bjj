@@ -16,14 +16,68 @@ Plataforma de patrocínio dos atletas juvenis do Battlefield Jiu-Jitsu (Balneár
 
 Um indicador de etapas no topo mostra em que passo a pessoa está. O rodapé é fixo no pé da tela em todas as páginas: mostra a marca e, quando há itens escolhidos, o total e o botão "Finalizar".
 
-## Pagamento na maquininha
+## Pagamento na maquininha (Elgin)
 
-O pagamento roda em **modo de teste** até a maquininha da Elgin ser ligada: a tela aprova sozinha em 8 segundos e tem botões para simular aprovado ou recusado. A maquininha cobra hoje os itens únicos mais a 1ª mensalidade, se houver. As mensalidades seguintes ainda precisam de uma solução de cobrança recorrente, porque o TEF da Elgin não faz cobrança mensal.
+A integração com a Elgin está pronta para os dois tipos de maquininha. O modo vem do endereço do totem:
 
-Para ligar a maquininha, mude `PAGAMENTO.modo` no bloco "PAGAMENTO NA MAQUININHA" do script:
+| Endereço do totem | Maquininha | Como cobra |
+| --- | --- | --- |
+| `/?totem=1` | nenhuma (modo de teste) | aprova sozinho em 8 s; botões para simular aprovado ou recusado |
+| `/?totem=1&pagamento=tefweb` | pinpad ligado ao totem | o app Elgin TEF HUB no próprio totem atende em `http://localhost:2001/tef/v1` e mostra as telas da Elgin por cima do site |
+| `/?totem=1&pagamento=pos&chave=...` | Smart POS ao lado do totem | a função `api/pagamento.js` (Vercel) manda a cobrança para a API POS Comandas e o site acompanha o status |
 
-- `"tefweb"`: o app Elgin TEF HUB instalado no próprio totem (Android ou Windows) atende em `http://localhost:2001/tef/v1` e conduz o pinpad. A função `cobrarTefWeb` já chama `/venda/credito`, `/venda/debito` e `/pix`; falta validar na homologação com a Elgin.
-- Smart POS ao lado do totem (POS Comandas, API da Elgin na internet): precisa de uma função no Vercel para guardar o token da Elgin, que não pode ficar na página.
+Sem `?pagamento=`, vale `PAGAMENTO.modoPadrao` no bloco "PAGAMENTO NA MAQUININHA" do script (hoje `"teste"`). A maquininha cobra hoje os itens únicos mais a 1ª mensalidade, se houver; as mensalidades seguintes ainda precisam de uma solução de cobrança recorrente, porque a Elgin não faz cobrança mensal.
+
+O "Obrigado" mostra o **código do apoio** (ex.: `BF0O1GP9E`), o mesmo que vai para a Elgin como identificador da cobrança, para conferir no portal de transações.
+
+### Pinpad no totem (TEF Web)
+
+Contrato conferido na documentação Elgin TEF Web e no app Elgin TEF HUB Android 2.07:
+
+- `GET /tef/v1` responde `{"status":"running"}` quando o serviço está no ar. No Android, se não estiver, o site abre `intent://connect/start` para subir o serviço (ao abrir o site e antes de cada cobrança).
+- `POST /venda/credito` `{valor:"120.00", parcelas:"1", financiamento:"1"}` (à vista), `POST /venda/debito` `{valor}` e `POST /pix` `{valor}`. A chamada só volta quando a transação termina.
+- Respostas: 200 quando a tela da Elgin fecha normalmente, 500 quando a transação é cancelada ou dá erro, 409 se havia outra operação em curso e 403 sem a permissão "Sobrepor a outros apps".
+- O resultado vem em `dados.resultado.tef` (`nsuTransacao`, `codigoAutorizacao`, `mensagemResultado`, ...). No Android o campo `codigo` vem sempre 0, então o site considera aprovado quando há NSU ou autorização e a mensagem não fala em recusa, cancelamento ou erro.
+- O app aceita chamadas de qualquer site (CORS `anyHost`, métodos GET e POST, cabeçalho `Content-Type`).
+- Para desistir, a pessoa aperta o botão vermelho do pinpad; a tela não tem botão de cancelar nesse modo.
+
+No totem: instalar e ativar o Elgin TEF HUB, liberar para ele a permissão **"Sobrepor a outros apps"** e, no Chrome 142 ou mais novo, liberar o acesso do site aos apps do aparelho na primeira cobrança (ou de antemão, pela política `LocalNetworkAccessAllowedForUrls` no gerenciador de dispositivos, com o endereço do site).
+
+### Smart POS ao lado do totem (POS Comandas)
+
+A página nunca vê o token da Elgin: ele fica nas variáveis de ambiente do Vercel (Settings → Environment Variables), lidas por `api/pagamento.js`:
+
+| Variável | O que é |
+| --- | --- |
+| `ELGIN_POS_TOKEN` | token Bearer que a Elgin envia (obrigatória) |
+| `ELGIN_POS_DESTINO` | identificador da maquininha que recebe a cobrança |
+| `ELGIN_POS_URL` | endereço da API; sem ela, usa o de homologação. Em produção, o endereço que a Elgin passar (a documentação cita `https://api-captter.tefelgin2.com.br/`) |
+| `ELGIN_POS_TIPO_DESTINO` | tipo do destino; padrão `0`, como no exemplo da Elgin |
+| `TOTEM_CHAVE` | opcional, recomendada: o totem só cobra se abrir o site com `&chave=` igual a ela |
+| `VALOR_MAXIMO` | opcional: maior cobrança aceita, em reais (padrão 5000) |
+
+O site cria a cobrança (débito = modalidade 1, crédito = 2, Pix = 3, valor em centavos), consulta o status no intervalo que a Elgin devolve (`intervaloEntreBuscas`) e trata 3 e 5 como aprovado e 4, 6, 7, 8, 10 e 11 como não aprovado. Se ninguém pagar em 3 minutos, ou se a pessoa tocar em "Cancelar pagamento", a cobrança é cancelada na Elgin; antes de dar como cancelada, o site confere se o pagamento não entrou bem nessa hora.
+
+### Testar sem maquininha
+
+`node scripts/simulador-elgin.js` sobe o site com a função, um TEF Web falso na porta 2001 e uma API POS Comandas falsa. Abra `http://127.0.0.1:8080/?totem=1&pagamento=tefweb` ou `http://127.0.0.1:8080/?totem=1&pagamento=pos&chave=chave-teste`. Para escolher a próxima resposta: `http://127.0.0.1:8080/_cenario?tef=recusa` (aprova, recusa, ocupado, fora) ou `?pos=recusa` (aprova, recusa, espera).
+
+### Homologação com a Elgin
+
+O que pedir à Elgin:
+
+- **Pinpad (TEF Web):** o número de terminal de homologação e a liberação do ambiente de teste pelo suporte integração. A ativação de teste usa o CNPJ 52.556.578/0008-07; na produção, o CNPJ da equipe e o pedido TEF com a credenciadora (cartão) e o banco (Pix) da equipe.
+- **Smart POS (POS Comandas):** o token de 4 dígitos para ativar o app Smart TEF na maquininha, o token Bearer da API, o identificador da maquininha (`destino`), a lista de maquininhas homologadas e o endereço de produção.
+
+O que conferir nos testes (em ordem):
+
+1. Uma venda de cada tipo (crédito, débito, Pix) aprovada e uma recusada, conferindo se o site leu certo o resultado. No TEF Web, o console do navegador registra a resposta da Elgin (`TEF Web ...`).
+2. No portal de transações da Elgin, se as vendas aparecem **confirmadas** e não pendentes. O TEF Web não tem rota de confirmação e o app Android devolve `requer_confirmacao: "1"`; venda pendente pode ser desfeita pela credenciadora em cerca de 72 horas.
+3. Se a Elgin exige comprovante impresso no pinpad (define se o totem precisa de impressora).
+4. No POS Comandas: se a cobrança precisa de `complemento`, se `parcelas: 0` vale para crédito à vista e se o cancelamento é `PUT` ou `GET` (a função tenta os dois).
+5. O roteiro de homologação da Elgin: formulário no Microsoft Forms (TEF) ou roteiro e vídeo de uma venda e um cancelamento (POS Comandas).
+
+Depois de homologado: trocar `PAGAMENTO.modoPadrao` para o modo escolhido (ou só usar `?pagamento=` no endereço do totem) e, no POS Comandas, apontar `ELGIN_POS_URL` para a produção.
 
 ## Modo totem
 
